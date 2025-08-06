@@ -11,13 +11,10 @@ config_version=5
 [application]
 
 config/name="project godot"
-config/features=PackedStringArray("4.4", "C#", "Forward Plus")
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="project godot"
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/gdUnit4/plugin.cfg")
