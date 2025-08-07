@@ -30,6 +30,9 @@ namespace projectgodot
 
             // 사망 이벤트 연결
             Health.Died += OnDeath;
+            
+            // 체력 변경 이벤트를 전역 이벤트 버스로 전달
+            Health.HealthChanged += OnHealthChanged;
         }
 
         public override void _PhysicsProcess(double delta)
@@ -92,6 +95,13 @@ namespace projectgodot
                 Health.TakeDamage(10);
                 GD.Print($"Player took 10 damage from zombie! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
             }
+        }
+
+        private void OnHealthChanged(int currentHealth)
+        {
+            // 체력 변경을 이벤트 버스를 통해 전달
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.PlayerHealthChanged, currentHealth, Health.MaxHealth);
         }
     }
 }

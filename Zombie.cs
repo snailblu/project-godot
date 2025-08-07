@@ -15,10 +15,7 @@ namespace projectgodot
         {
             // 좀비는 체력 30으로 시작
             Health = new HealthComponent(30);
-            Health.Died += () => {
-                GD.Print("Zombie has died!");
-                QueueFree(); // 죽으면 사라짐
-            };
+            Health.Died += OnDied;
 
             // AI 컴포넌트 초기화
             _ai = new ZombieAIComponent();
@@ -55,6 +52,17 @@ namespace projectgodot
             // 2. 이동
             Velocity = direction * Speed * (float)delta;
             MoveAndSlide();
+        }
+
+        private void OnDied()
+        {
+            GD.Print("Zombie has died!");
+            
+            // 이벤트 버스를 통해 ZombieDied 이벤트 발생 (100점)
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.ZombieDied, 100);
+            
+            QueueFree(); // 죽으면 사라짐
         }
     }
 }

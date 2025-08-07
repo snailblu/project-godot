@@ -43,3 +43,5 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 메인 씬(`Main.tscn`)이 프로젝트 실행을 위해 설정되어 있습니다
 
 - 항상 컴포지션 철학에 맞게 디자인해 주세요.
+- 새로운 피처를 추가할 때는 TDD 접근법을 사용해 주세요.
+- 씬을 작성할때는 직접 tscn 파일을 작성해 주세요.
