@@ -1,0 +1,6 @@
+{
+  "port": 9080,
+  "timeout": 3.0,
+  "host": "localhost",
+  "allowed_commands": null
+}

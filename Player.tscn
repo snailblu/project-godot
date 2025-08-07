@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://hlg1a20kb0h0"]
+[gd_scene load_steps=5 format=3 uid="uid://hlg1a20kb0h0"]
 
 [ext_resource type="Texture2D" uid="uid://d4cu0kxi6ybqp" path="res://icon.svg" id="1_0b4pg"]
 [ext_resource type="Script" uid="uid://cbvtv67xy2ffk" path="res://Player.cs" id="1_b8c5k"]
@@ -6,6 +6,10 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_43tru"]
 radius = 58.15
 height = 116.3
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_damage"]
+radius = 65.0
+height = 130.0
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_b8c5k")
@@ -15,3 +19,10 @@ texture = ExtResource("1_0b4pg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_43tru")
+
+[node name="DamageArea" type="Area2D" parent="."]
+
+[node name="DamageCollision" type="CollisionShape2D" parent="DamageArea"]
+shape = SubResource("CapsuleShape2D_damage")
+
+[connection signal="body_entered" from="DamageArea" to="." method="OnBodyEntered"]
