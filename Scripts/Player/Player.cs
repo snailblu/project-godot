@@ -26,7 +26,7 @@ namespace projectgodot
             _weapon.OnShoot += SpawnProjectile;
 
             // 발사체 씬 로드
-            _projectileScene = GD.Load<PackedScene>("res://projectile.tscn");
+            _projectileScene = GD.Load<PackedScene>("res://Scenes/Projectiles/projectile.tscn");
 
             // 사망 이벤트 연결
             Health.Died += OnDeath;
