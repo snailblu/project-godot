@@ -26,6 +26,12 @@ namespace projectgodot
 
         public Projectile CreateProjectile(PackedScene scene, Vector2 position, Vector2 direction)
         {
+            if (scene == null)
+            {
+                GD.PrintErr("PackedScene이 null입니다. Projectile을 생성할 수 없습니다.");
+                return null;
+            }
+            
             var projectile = scene.Instantiate<Projectile>();
             projectile.GlobalPosition = position;
             projectile.Direction = direction;
