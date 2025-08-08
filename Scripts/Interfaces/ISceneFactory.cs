@@ -21,7 +21,8 @@ namespace projectgodot
         /// <param name="scene">발사체 씬</param>
         /// <param name="position">생성 위치</param>
         /// <param name="direction">발사 방향</param>
+        /// <param name="damage">발사체 데미지</param>
         /// <returns>생성된 발사체 인스턴스</returns>
-        Projectile CreateProjectile(PackedScene scene, Vector2 position, Vector2 direction);
+        Projectile CreateProjectile(PackedScene scene, Vector2 position, Vector2 direction, int damage);
     }
 }
