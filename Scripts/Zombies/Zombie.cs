@@ -1,11 +1,12 @@
 using Godot;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
     public partial class Zombie : CharacterBody2D
     {
-        [Export] public float MoveSpeed { get; set; } = 900.0f;
-        [Export] public int InitialHealth { get; set; } = 30;
+        [Export] public float MoveSpeed { get; set; } = GameConstants.Zombie.DEFAULT_MOVE_SPEED;
+        [Export] public int InitialHealth { get; set; } = GameConstants.Zombie.DEFAULT_INITIAL_HEALTH;
         
         private Player _player;
 

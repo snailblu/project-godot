@@ -1,4 +1,5 @@
 using System;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -8,8 +9,8 @@ namespace projectgodot
     /// </summary>
     public class DashLogic
     {
-        public float DashSpeed { get; set; } = 1000f;
-        public float DashDuration { get; set; } = 0.2f;
+        public float DashSpeed { get; set; } = GameConstants.Dash.DEFAULT_DASH_SPEED;
+        public float DashDuration { get; set; } = GameConstants.Dash.DEFAULT_DASH_DURATION;
         public bool IsDashing { get; private set; }
         
         private DateTime _dashStartTime;

@@ -1,4 +1,5 @@
 using System;
+using projectgodot.Helpers;
 
 namespace projectgodot
 {
@@ -15,7 +16,7 @@ namespace projectgodot
 
         public void AddScore(int amount)
         {
-            if (amount <= 0) return;
+            if (!ValidationHelper.IsPositiveValue(amount)) return;
             
             CurrentScore += amount;
             ScoreChanged?.Invoke(CurrentScore);

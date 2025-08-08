@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -67,8 +68,8 @@ namespace projectgodot
                 composition.Add(runnerScene, CurrentWaveNumber);
             
             // 탱커 좀비는 5의 배수 웨이브마다 등장 (5웨이브=1마리, 10웨이브=2마리...)
-            if (tankScene != null && CurrentWaveNumber % 5 == 0)
-                composition.Add(tankScene, CurrentWaveNumber / 5);
+            if (tankScene != null && CurrentWaveNumber % GameConstants.Wave.TANK_ZOMBIE_WAVE_INTERVAL == 0)
+                composition.Add(tankScene, CurrentWaveNumber / GameConstants.Wave.TANK_ZOMBIE_WAVE_INTERVAL);
             
             return composition;
         }
