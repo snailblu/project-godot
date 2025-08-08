@@ -115,6 +115,10 @@ namespace projectgodot
         {
             if (_sceneFactory == null) return;
             
+            // Events 싱글톤을 통해 무기 발사 이벤트 발생
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.PlayerFiredWeapon);
+            
             // SceneFactory를 통해 발사체 생성
             var direction = (GetGlobalMousePosition() - GlobalPosition).Normalized();
             _sceneFactory.CreateProjectile(_projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
@@ -174,6 +178,12 @@ namespace projectgodot
             // 체력 변경을 이벤트 버스를 통해 전달
             var events = GetNode<Events>("/root/Events");
             events.EmitSignal(Events.SignalName.PlayerHealthChanged, currentHealth, Health.MaxHealth);
+            
+            // 체력이 감소했을 때 (데미지를 받았을 때) 사운드 이벤트 발생
+            if (currentHealth < Health.MaxHealth)
+            {
+                events.EmitSignal(Events.SignalName.PlayerTookDamage);
+            }
         }
     }
 }

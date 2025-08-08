@@ -18,6 +18,7 @@ namespace projectgodot
             // Export된 InitialHealth 값으로 체력 컴포넌트 초기화
             Health = new HealthComponent(InitialHealth);
             Health.Died += OnDied;
+            Health.HealthChanged += OnHealthChanged;
 
             // AI 컴포넌트 초기화
             _ai = new ZombieAIComponent();
@@ -65,6 +66,13 @@ namespace projectgodot
             events.EmitSignal(Events.SignalName.ZombieDied, 100);
             
             QueueFree(); // 죽으면 사라짐
+        }
+
+        private void OnHealthChanged(int currentHealth)
+        {
+            // 좀비가 데미지를 받았을 때 사운드 이벤트 발생
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.ZombieTookDamage);
         }
     }
 }
