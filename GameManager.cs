@@ -9,6 +9,8 @@ namespace projectgodot
     public partial class GameManager : Node
     {
         [Export] private PackedScene _zombieScene;
+        [Export] private PackedScene _runnerZombieScene;
+        [Export] private PackedScene _tankZombieScene;
         [Export] private Node _spawnLocationsContainer; // 스폰 위치들을 담을 Node
         
         private GameController _gameController;
@@ -40,6 +42,10 @@ namespace projectgodot
             // GameController 초기화 (테스트된 비즈니스 로직)
             _gameController = new GameController(_waveManager, _zombieSpawner);
             _gameController.SetZombieScene(_zombieScene);
+            
+            // 새로운 좀비 씬들도 GameController에 등록
+            _gameController.SetRunnerZombieScene(_runnerZombieScene);
+            _gameController.SetTankZombieScene(_tankZombieScene);
             
             // GameController 이벤트 구독
             _gameController.WaveCleared += OnWaveCleared;

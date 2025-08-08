@@ -1,9 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://dd4veg0dawqxy"]
+[gd_scene load_steps=8 format=3 uid="uid://dd4veg0dawqxy"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Player.tscn" id="1_3ymgr"]
 [ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Zombie.tscn" id="2_zombie"]
 [ext_resource type="Script" uid="uid://di8302x8a4pv8" path="res://GameManager.cs" id="3_gamemanager"]
+[ext_resource type="PackedScene" uid="uid://bxiciup2bitpk" path="res://RunnerZombie.tscn" id="3_lgr22"]
 [ext_resource type="Script" uid="uid://bamgv7tdye4wx" path="res://SceneFactory.cs" id="4_scenefactory"]
+[ext_resource type="PackedScene" uid="uid://lqs8mb2a26vv" path="res://TankZombie.tscn" id="4_trn2v"]
 [ext_resource type="PackedScene" uid="uid://cr846fm1ixgpc" path="res://HUD.tscn" id="5_hud"]
 
 [node name="Main" type="Node"]
@@ -11,6 +13,8 @@
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("_spawnLocationsContainer")]
 script = ExtResource("3_gamemanager")
 _zombieScene = ExtResource("2_zombie")
+_runnerZombieScene = ExtResource("3_lgr22")
+_tankZombieScene = ExtResource("4_trn2v")
 _spawnLocationsContainer = NodePath("SpawnLocations")
 
 [node name="SceneFactory" type="Node" parent="GameManager"]

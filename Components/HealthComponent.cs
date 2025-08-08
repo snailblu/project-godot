@@ -5,7 +5,7 @@ namespace projectgodot
 {
     public class HealthComponent
     {
-        public int MaxHealth { get; }
+        public int MaxHealth { get; private set; }
         public int CurrentHealth { get; private set; }
         public bool IsDead => CurrentHealth <= 0;
 

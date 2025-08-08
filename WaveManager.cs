@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Godot;
 
 namespace projectgodot
 {
@@ -43,6 +45,32 @@ namespace projectgodot
         {
             IsWaveActive = false;
             WaveEnded?.Invoke(CurrentWaveNumber);
+        }
+        
+        /// <summary>
+        /// 웨이브별 좀비 구성을 가져옵니다 (컴포지션 패턴의 힘!)
+        /// </summary>
+        /// <param name="normalScene">일반 좀비 씬</param>
+        /// <param name="runnerScene">빠른 좀비 씬</param>
+        /// <param name="tankScene">탱커 좀비 씬</param>
+        /// <returns>좀비 씬과 수량의 딕셔너리</returns>
+        public Dictionary<PackedScene, int> GetZombieCompositionForWave(PackedScene normalScene, PackedScene runnerScene, PackedScene tankScene)
+        {
+            var composition = new Dictionary<PackedScene, int>();
+            
+            // 기본 좀비는 항상 3마리
+            if (normalScene != null)
+                composition.Add(normalScene, 3);
+            
+            // 빠른 좀비는 웨이브 번호만큼 (1웨이브=1마리, 2웨이브=2마리...)
+            if (runnerScene != null)
+                composition.Add(runnerScene, CurrentWaveNumber);
+            
+            // 탱커 좀비는 5의 배수 웨이브마다 등장 (5웨이브=1마리, 10웨이브=2마리...)
+            if (tankScene != null && CurrentWaveNumber % 5 == 0)
+                composition.Add(tankScene, CurrentWaveNumber / 5);
+            
+            return composition;
         }
     }
 }

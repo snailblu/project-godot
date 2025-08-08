@@ -4,7 +4,9 @@ namespace projectgodot
 {
     public partial class Zombie : CharacterBody2D
     {
-        public const float Speed = 900.0f;
+        [Export] public float MoveSpeed { get; set; } = 900.0f;
+        [Export] public int InitialHealth { get; set; } = 30;
+        
         private Player _player;
 
         // 컴포넌트들을 '부품'처럼 가짐
@@ -13,8 +15,8 @@ namespace projectgodot
 
         public override void _Ready()
         {
-            // 좀비는 체력 30으로 시작
-            Health = new HealthComponent(30);
+            // Export된 InitialHealth 값으로 체력 컴포넌트 초기화
+            Health = new HealthComponent(InitialHealth);
             Health.Died += OnDied;
 
             // AI 컴포넌트 초기화
@@ -50,7 +52,7 @@ namespace projectgodot
             var direction = _ai.CalculateDirection(this.GlobalPosition, _player.GlobalPosition);
 
             // 2. 이동
-            Velocity = direction * Speed * (float)delta;
+            Velocity = direction * MoveSpeed * (float)delta;
             MoveAndSlide();
         }
 
