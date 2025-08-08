@@ -29,6 +29,22 @@ namespace projectgodot
         [Signal]
         public delegate void PowerupCollectedEventHandler();
 
+        // 플레이어가 무기를 발사했을 때 발생할 시그널
+        [Signal]
+        public delegate void PlayerFiredWeaponEventHandler();
+
+        // 좀비가 데미지를 받았을 때 발생할 시그널
+        [Signal]
+        public delegate void ZombieTookDamageEventHandler();
+
+        // 플레이어가 데미지를 받았을 때 발생할 시그널
+        [Signal]
+        public delegate void PlayerTookDamageEventHandler();
+
+        // 총알이 벽에 부딪혔을 때 발생할 시그널
+        [Signal]
+        public delegate void ProjectileHitWallEventHandler();
+
         public override void _Ready()
         {
             GD.Print("Events 이벤트 버스가 초기화되었습니다.");

@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxvg8xwn5rwmr"]
+
+[ext_resource type="Script" uid="uid://d1ftstlm4pxx0" path="res://Scripts/Effects/HitEffect.cs" id="1_0x8mj"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1hlqx"]
+direction = Vector3(0, -1, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angular_velocity_min = -360.0
+angular_velocity_max = 360.0
+gravity = Vector3(0, 98, 0)
+scale_min = 0.5
+scale_max = 1.5
+
+[node name="HitEffect" type="Node2D"]
+script = ExtResource("1_0x8mj")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 20
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_1hlqx")
