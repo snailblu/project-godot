@@ -24,6 +24,10 @@ namespace projectgodot
         // 게임 상태가 변경되었을 때 발생할 시그널
         [Signal]
         public delegate void GameStateChangedEventHandler(int newState);
+        
+        // 파워업이 수집되었을 때 발생할 시그널
+        [Signal]
+        public delegate void PowerupCollectedEventHandler();
 
         public override void _Ready()
         {

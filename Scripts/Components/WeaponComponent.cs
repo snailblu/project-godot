@@ -6,6 +6,7 @@ namespace projectgodot
     {
         private readonly float _cooldown;
         private float _cooldownTimer;
+        public float Damage { get; set; } = 10f;
         
         public event Action OnShoot;
 

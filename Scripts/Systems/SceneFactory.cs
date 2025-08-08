@@ -24,7 +24,7 @@ namespace projectgodot
             return zombie;
         }
 
-        public Projectile CreateProjectile(PackedScene scene, Vector2 position, Vector2 direction)
+        public Projectile CreateProjectile(PackedScene scene, Vector2 position, Vector2 direction, int damage)
         {
             if (scene == null)
             {
@@ -35,6 +35,7 @@ namespace projectgodot
             var projectile = scene.Instantiate<Projectile>();
             projectile.GlobalPosition = position;
             projectile.Direction = direction;
+            projectile.Damage = damage;
             
             // 현재 씬의 루트에 추가
             GetTree().CurrentScene.AddChild(projectile);
