@@ -1,24 +1,82 @@
-[gd_scene load_steps=5 format=3 uid="uid://hlg1a20kb0h0"]
+[gd_scene load_steps=12 format=3 uid="uid://hlg1a20kb0h0"]
 
-[ext_resource type="Texture2D" uid="uid://d4cu0kxi6ybqp" path="res://icon.svg" id="1_0b4pg"]
 [ext_resource type="Script" uid="uid://cbvtv67xy2ffk" path="res://Scripts/Player/Player.cs" id="1_b8c5k"]
+[ext_resource type="Texture2D" uid="uid://d16uic4ppfn84" path="res://Textures/Characters/AnimationSheet_Character.png" id="2_ft8w5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ft8w5"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h54ih"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ude3g"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jmcll"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4wape"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t26db"]
+atlas = ExtResource("2_ft8w5")
+region = Rect2(96, 64, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fk5o5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ft8w5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h54ih")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ude3g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jmcll")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4wape")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t26db")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_43tru"]
-radius = 58.15
-height = 116.3
+radius = 6.0
+height = 24.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_damage"]
-radius = 65.0
-height = 130.0
+radius = 5.9
+height = 22.1
 
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 0
 script = ExtResource("1_b8c5k")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_0b4pg")
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_fk5o5")
+animation = &"walk"
+frame_progress = 0.736366
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("CapsuleShape2D_43tru")
 
 [node name="DamageArea" type="Area2D" parent="."]
@@ -26,6 +84,8 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="DamageCollision" type="CollisionShape2D" parent="DamageArea"]
+visible = false
+position = Vector2(0, 2)
 shape = SubResource("CapsuleShape2D_damage")
 
 [node name="Camera2D" type="Camera2D" parent="."]

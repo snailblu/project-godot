@@ -15,6 +15,13 @@ namespace projectgodot
         private PowerupLogic _powerupLogic;
         private float _originalWeaponDamage;
         private CameraShakeComponent _cameraShake;
+        
+        // 새로운 컴포넌트들
+        private PlayerInputHandler _inputHandler;
+        private PlayerAnimationController _animationController;
+        private PlayerCollisionHandler _collisionHandler;
+        private PlayerEventBridge _eventBridge;
+        
         public HealthComponent Health { get; private set; }
 
         public override void _Ready()
@@ -59,105 +66,115 @@ namespace projectgodot
             _cameraShake = new CameraShakeComponent();
             AddChild(_cameraShake);
             
+            // 새로운 컴포넌트들 초기화
+            _inputHandler = new PlayerInputHandler();
+            _animationController = new PlayerAnimationController();
+            _collisionHandler = new PlayerCollisionHandler();
+            _eventBridge = new PlayerEventBridge();
+            
+            AddChild(_inputHandler);
+            AddChild(_animationController);
+            AddChild(_collisionHandler);
+            AddChild(_eventBridge);
+            
+            // 컴포넌트들 초기화 및 이벤트 연결
+            _collisionHandler.Initialize(_dash);
+            
+            // 이벤트 연결
+            _inputHandler.MovementRequested += OnMovementRequested;
+            _inputHandler.DashRequested += OnDashRequested;
+            _inputHandler.ShootRequested += OnShootRequested;
+            _inputHandler.TestDamageRequested += OnTestDamageRequested;
+            _collisionHandler.DamageReceived += OnDamageReceived;
+            
             // 카메라 쉐이크 이벤트 연결
             var events = GetNode<Events>("/root/Events");
             events.CameraShakeRequested += OnCameraShakeRequested;
         }
 
+        private Vector2 _currentMovementDirection;
+
         public override void _PhysicsProcess(double delta)
         {
-            // 1. 입력 받기
-            Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+            // 대시 상태 업데이트
+            _inputHandler.SetDashingState(_dash.IsDashing);
             
-            // 대시 입력 처리 (Shift 키)
-            if (Input.IsActionJustPressed("dash") && !_dash.IsDashing)
-            {
-                if (direction != Vector2.Zero)
-                {
-                    _dash.StartDash(direction);
-                    
-                    // 대시 시작 시 임팩트 쉐이크
-                    var events = GetNode<Events>("/root/Events");
-                    events.EmitSignal(Events.SignalName.CameraShakeRequested, 
-                        GameConstants.CameraShake.DASH_INTENSITY, 
-                        GameConstants.CameraShake.DASH_DURATION);
-                }
-            }
-
-            // 임시 데미지 테스트 (T키)
-            if (Input.IsActionJustPressed("ui_accept")) // T키는 기본적으로 ui_accept에 매핑됨
-            {
-                Health.TakeDamage(10);
-                GD.Print($"Player took 10 damage! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
-                
-                // 테스트 데미지 시에도 쉐이크
-                var events = GetNode<Events>("/root/Events");
-                events.EmitSignal(Events.SignalName.CameraShakeRequested, 
-                    GameConstants.CameraShake.HEAVY_INTENSITY, 
-                    GameConstants.CameraShake.HEAVY_DURATION);
-            }
-
-            // 2. TDD로 검증된 로직 클래스를 이용해 속도 계산
+            // TDD로 검증된 로직 클래스를 이용해 속도 계산
             Vector2 calculatedVelocity;
             
             if (_dash.IsDashing)
             {
                 // 대시 중일 때는 대시 속도 사용
-                calculatedVelocity = direction * _dash.DashSpeed;
+                calculatedVelocity = _currentMovementDirection * _dash.DashSpeed;
             }
             else
             {
                 // 일반 이동
                 calculatedVelocity = _playerMovement.CalculateVelocity(
-                    direction, 
+                    _currentMovementDirection, 
                     _playerData.MovementSpeed, 
                     (float)delta
                 );
             }
 
-            // 3. Godot 노드에 결과 적용
+            // Godot 노드에 결과 적용
             Velocity = calculatedVelocity;
             MoveAndSlide();
 
-            // 4. 무기 쿨다운 업데이트
+            // 애니메이션 업데이트
+            _animationController.UpdateAnimation(Velocity);
+
+            // 무기 쿨다운 업데이트
             _weapon.Process((float)delta);
             
-            // 5. 파워업 효과 업데이트
+            // 파워업 효과 업데이트
             UpdatePowerupEffect();
         }
 
-        public override void _Input(InputEvent @event)
+        // 입력 이벤트 핸들러들
+        private void OnMovementRequested(Vector2 direction)
         {
-            // 마우스 왼쪽 버튼을 누르고 있으면 발사 시도
-            if (Input.IsActionPressed("shoot"))
-            {
-                _weapon.Shoot();
-            }
+            _currentMovementDirection = direction;
+        }
+
+        private void OnDashRequested(Vector2 direction)
+        {
+            _dash.StartDash(direction);
+            _eventBridge.RequestDashShake();
+        }
+
+        private void OnShootRequested()
+        {
+            _weapon.Shoot();
+        }
+
+        private void OnTestDamageRequested()
+        {
+            Health.TakeDamage(10);
+            GD.Print($"Player took 10 damage! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            _eventBridge.RequestHeavyShake();
+        }
+
+        private void OnDamageReceived(int damage)
+        {
+            Health.TakeDamage(damage);
+            GD.Print($"Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            _eventBridge.RequestHeavyShake();
         }
 
         private void OnDeath()
         {
             GD.Print("Player has died!");
-            
-            // 게임 오버 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.GameOver);
-            
-            QueueFree(); // 씬 트리에서 노드를 제거
+            _eventBridge.NotifyGameOver();
+            QueueFree();
         }
 
         private void SpawnProjectile()
         {
             if (_sceneFactory == null) return;
             
-            // Events 싱글톤을 통해 무기 발사 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.PlayerFiredWeapon);
-            
-            // 총 발사 시 가벼운 카메라 쉐이크
-            events.EmitSignal(Events.SignalName.CameraShakeRequested, 
-                GameConstants.CameraShake.LIGHT_INTENSITY, 
-                GameConstants.CameraShake.LIGHT_DURATION);
+            _eventBridge.NotifyPlayerFiredWeapon();
+            _eventBridge.RequestLightShake();
             
             // 총구 화염 효과 생성
             var direction = (GetGlobalMousePosition() - GlobalPosition).Normalized();
@@ -237,15 +254,8 @@ namespace projectgodot
 
         private void OnHealthChanged(int currentHealth)
         {
-            // 체력 변경을 이벤트 버스를 통해 전달
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.PlayerHealthChanged, currentHealth, Health.MaxHealth);
-            
-            // 체력이 감소했을 때 (데미지를 받았을 때) 사운드 이벤트 발생
-            if (currentHealth < Health.MaxHealth)
-            {
-                events.EmitSignal(Events.SignalName.PlayerTookDamage);
-            }
+            _eventBridge.NotifyPlayerHealthChanged(currentHealth, Health.MaxHealth);
         }
+
     }
 }
