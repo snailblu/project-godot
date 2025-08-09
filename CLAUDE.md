@@ -123,3 +123,63 @@ Godot AutoLoad로 등록된 전역 이벤트 시스템:
 
 - SpawnHelper.GetRandomizedSpawnPosition()으로 랜덤 오프셋 적용
 - GameConstants.Spawn.RANDOM_OFFSET_RANGE (±50픽셀) 내 분산
+
+## TDD 및 아키텍처 원칙
+
+### 레이어 분리 원칙
+
+**비즈니스 로직 레이어** (순수 C#, Godot 독립적)
+- `*Logic` 클래스들 (예: MainMenuLogic, GameOverScreenLogic)
+- 순수 C# 클래스로 구현, Godot API 접근 금지
+- 테스트 가능해야 하며 EnvironmentHelper 사용 불필요
+
+**UI/Godot 통합 레이어** (Godot 의존적)
+- Godot Node를 상속받는 클래스들
+- `GetNode<T>("/root/NodeName")` 방식으로 AutoLoad 접근
+- `Engine.GetSingleton()` 사용 금지 (존재하지 않는 API)
+
+### Godot API 접근 규칙
+
+**✅ 올바른 방법:**
+```csharp
+// Node 클래스 내에서
+var events = GetNode<Events>("/root/Events");
+var gameData = GetNode<GameData>("/root/GameData");
+```
+
+**❌ 잘못된 방법:**
+```csharp
+// Logic 클래스에서 Godot API 접근 시도
+var tree = Engine.GetSingleton("SceneTree") as SceneTree; // 에러 발생
+```
+
+### 의존성 주입 패턴
+
+Logic 클래스가 Godot 데이터에 접근해야 할 경우:
+1. **Option 1**: UI 클래스에서 필요한 데이터를 Logic 클래스 메서드에 파라미터로 전달
+2. **Option 2**: Logic 클래스는 순수 계산만 담당하고, UI 클래스에서 결과를 받아 Godot API 호출
+
+### 테스트 가능한 구조 유지
+
+- Logic 클래스는 반드시 TEST_ENVIRONMENT에서 독립적으로 실행 가능해야 함
+- Godot 의존성이 있는 코드는 UI 레이어에만 위치
+- Mock이나 의존성 주입을 통해 테스트 격리
+
+## 씬 매니징 시스템
+
+### 씬 구조
+- **MainMenu.tscn**: 메인 메뉴 (프로젝트 시작 씬)
+- **Game.tscn**: 게임플레이 씬 (이전 Main.tscn)
+- **GameOverScreen.tscn**: 게임 오버 씬
+
+### AutoLoad 싱글톤
+- **Events**: 전역 이벤트 버스
+- **SoundManager**: 사운드 관리
+- **GameData**: 씬 간 데이터 전달 (점수, 웨이브, 체력)
+- **SceneManager**: 씬 전환 관리
+
+### 게임 플로우
+1. 게임 시작 → MainMenu.tscn 표시
+2. Start 버튼 → GameData 초기화 + Game.tscn으로 전환
+3. 플레이어 사망 → GameOver.tscn으로 전환
+4. Restart/Main Menu → 해당 씬으로 전환

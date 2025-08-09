@@ -1,27 +1,45 @@
 # 프로젝트 개요
 
 ## 프로젝트 목적
-이 프로젝트는 Godot 4.4.1 엔진과 C#을 사용한 2D 게임 개발 프로젝트입니다. 플레이어 캐릭터의 이동 기능을 구현하며, TDD(테스트 주도 개발) 방법론을 적용하여 개발됩니다.
+이 프로젝트는 **Godot 4.4.1과 C#을 사용하여 개발된 좀비 디펜스 게임**입니다. .NET 8.0을 타겟으로 하며, 플레이어가 무기를 사용해 몰려오는 좀비들로부터 생존하는 탑다운 슈터 게임입니다.
 
-## 기술 스택
-- **게임 엔진**: Godot 4.4.1
-- **프로그래밍 언어**: C# (.NET 8.0)
-- **테스트 프레임워크**: NUnit 4.0.1
-- **타겟 플랫폼**: .NET 8.0
+## 주요 기술 스택
+
+### 게임 엔진 및 프레임워크
+- **Godot Engine**: 4.4.1 (C# 지원 버전)
+- **.NET Framework**: .NET 8.0
+- **언어**: C# (Root Namespace: `projectgodot`)
+- **어셈블리 이름**: "project godot"
+
+### 테스팅 프레임워크
+- **NUnit**: 4.0.1 (Assert.That 문법 사용)
+- **Moq**: 4.20.72 (모킹 프레임워크)
+- **Microsoft.NET.Test.Sdk**: 17.8.0
+- **NUnit3TestAdapter**: 4.5.0
+
+### 개발 환경
+- **플랫폼**: macOS (Darwin)
+- **Godot 실행 경로**: `/Applications/Godot_mono.app/Contents/MacOS/godot`
+- **.NET 버전**: 9.0.304 (개발 환경)
+
+## 게임 특징
+
+### 게임플레이
+- **장르**: 탑다운 좀비 디펜스 슈터
+- **웨이브 시스템**: 단계별로 강해지는 좀비 웨이브
+- **다양한 좀비 타입**: 기본 좀비, 러너 좀비, 탱커 좀비
+- **플레이어 시스템**: 이동, 사격, 대시 기능
+- **파워업 시스템**: 임시 능력 강화 아이템
+
+### 아키텍처 철학
+- **TDD (Test-Driven Development)**: 99개의 NUnit 테스트로 핵심 로직 커버리지 확보
+- **컴포지션 패턴**: 상속보다 컴포지션 우선 사용
+- **이벤트 기반 아키텍처**: 전역 이벤트 버스를 통한 느슨한 결합
+- **레이어드 아키텍처**: 비즈니스 로직과 Godot 통합 레이어 분리
+- **의존성 주입**: 생성자 주입을 통한 테스트 가능한 구조
 
 ## 프로젝트 설정
-- **프로젝트 이름**: "project godot"
-- **어셈블리 이름**: "project godot"
-- **Root Namespace**: `projectgodot`
-- **메인 씬**: `res://Main.tscn`
-- **Godot SDK**: Godot.NET.Sdk/4.4.1
-
-## 핵심 구성요소
-1. **Player.cs**: 메인 플레이어 캐릭터 클래스 (CharacterBody2D 상속)
-2. **PlayerData.cs**: 플레이어 데이터 관리 클래스
-3. **PlayerMovement.cs**: 플레이어 이동 로직 클래스
-4. **Tests/**: NUnit 테스트 파일들
-
-## 개발 접근법
-- TDD(테스트 주도 개발) 방법론 사용
-- 컴포지션 패턴 적용 (Player 클래스가 PlayerData, PlayerMovement 인스턴스를 포함)
+- **메인 씬**: `res://Scenes/UI/MainMenu.tscn` (시작 화면)
+- **게임 씬**: `res://Scenes/Main/Game.tscn` (실제 게임플레이)
+- **렌더링**: OpenGL Compatibility 모드
+- **입력 시스템**: 마우스 클릭 사격, 키보드 이동, Space 대시

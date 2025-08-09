@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://c2sc7uvrbvn6o"]
+[gd_scene load_steps=9 format=3 uid="uid://dd4veg0dawqxy"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Scenes/Zombies/Zombie.tscn" id="2_zombie"]

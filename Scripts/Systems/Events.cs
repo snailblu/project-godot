@@ -45,6 +45,31 @@ namespace projectgodot
         [Signal]
         public delegate void ProjectileHitWallEventHandler();
 
+        // UI 관련 시그널들
+        // 게임 시작 요청 시그널
+        [Signal]
+        public delegate void StartGameRequestedEventHandler();
+
+        // 설정 화면 표시 요청 시그널
+        [Signal]
+        public delegate void ShowSettingsRequestedEventHandler();
+
+        // 게임 종료 요청 시그널
+        [Signal]
+        public delegate void QuitGameRequestedEventHandler();
+
+        // 게임 오버 시그널
+        [Signal]
+        public delegate void GameOverEventHandler();
+
+        // 일시정지 토글 시그널
+        [Signal]
+        public delegate void PauseToggledEventHandler(bool isPaused);
+
+        // 메인 메뉴 표시 요청 시그널
+        [Signal]
+        public delegate void ShowMainMenuRequestedEventHandler();
+
         public override void _Ready()
         {
             GD.Print("Events 이벤트 버스가 초기화되었습니다.");

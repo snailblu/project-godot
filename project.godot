@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="project godot"
-run/main_scene="res://Scenes/Main/Main.tscn"
+run/main_scene="res://Scenes/UI/MainMenu.tscn"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 Events="*res://Scripts/Systems/Events.cs"
 SoundManager="*res://Scripts/Managers/SoundManager.cs"
+GameData="*res://Scripts/Systems/GameData.cs"
+SceneManager="*res://Scripts/Managers/SceneManager.cs"
 
 [dotnet]
 

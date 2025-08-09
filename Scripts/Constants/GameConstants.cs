@@ -55,6 +55,14 @@ namespace projectgodot.Constants
             public const float RANDOM_OFFSET_TOTAL = 100f; // NextDouble() * 100 - 50
         }
         
+        // 씬 경로 상수
+        public static class Scenes
+        {
+            public const string MAIN_MENU = "res://Scenes/UI/MainMenu.tscn";
+            public const string GAME = "res://Scenes/Main/Game.tscn";
+            public const string GAME_OVER = "res://Scenes/UI/GameOverScreen.tscn";
+        }
+        
         // 유효성 검사 상수
         public static class Validation
         {
