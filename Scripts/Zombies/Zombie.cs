@@ -45,7 +45,6 @@ namespace projectgodot
             if (Health.IsDead) 
             {
                 // 안전장치: 죽은 좀비는 즉시 제거
-                GD.Print("Dead zombie detected in _PhysicsProcess, removing...");
                 QueueFree();
                 return;
             }
@@ -60,7 +59,6 @@ namespace projectgodot
 
         private void OnDied()
         {
-            GD.Print("Zombie has died!");
             
             // 이벤트 버스를 통해 ZombieDied 이벤트 발생 (100점)
             var events = GetNode<Events>("/root/Events");

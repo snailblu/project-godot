@@ -22,7 +22,6 @@ namespace projectgodot
             // 파티클 재생 시작
             particles.Restart();
             
-            GD.Print("HitEffect 파티클이 생성되었습니다.");
         }
     }
 }
