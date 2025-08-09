@@ -88,13 +88,13 @@ namespace projectgodot.Constants
             public const int RUNNER_PARTICLE_COUNT = 30;       // 러너 좀비  
             public const int TANK_PARTICLE_COUNT = 100;        // 탱커 좀비
             
-            // 파티클 속도 설정
-            public const float BASIC_VELOCITY_SCALE = 1.0f;
-            public const float RUNNER_VELOCITY_SCALE = 1.5f;
-            public const float TANK_VELOCITY_SCALE = 0.8f;
+            // 파티클 속도 설정 (5-15픽셀 이동용으로 극도로 낮춤)
+            public const float BASIC_VELOCITY_SCALE = 0.05f;   // 2.5-5 픽셀
+            public const float RUNNER_VELOCITY_SCALE = 0.08f;  // 4-8 픽셀  
+            public const float TANK_VELOCITY_SCALE = 0.03f;    // 1.5-3 픽셀
             
-            // 파티클 지속 시간
-            public const float EFFECT_DURATION = 2.0f;
+            // 파티클 지속 시간 (바닥에 오래 남아있도록)
+            public const float EFFECT_DURATION = 10.0f;
             
             // 파티클 크기 설정
             public const float BASIC_SCALE_MIN = 2.0f;
@@ -105,12 +105,18 @@ namespace projectgodot.Constants
             public const float TANK_SCALE_MAX = 6.0f;
             
             // 파티클 물리 설정
-            public const float SPREAD_ANGLE = 45.0f;       // 파티클 퍼짐 각도
+            public const float SPREAD_ANGLE = 15.0f;       // 파티클 퍼짐 각도 (아래쪽만 분사되도록 축소)
             public const float GRAVITY_STRENGTH = 98.0f;   // 중력 강도
             
             // 화면 플래시 설정
             public const float FLASH_INTENSITY = 0.3f;        // 플래시 강도
             public const float FLASH_DURATION = 0.3f;         // 플래시 지속 시간
+            
+            // Z-Index 설정 (레이어 순서)
+            public const int Z_INDEX = -10;                   // 뒤쪽 레이어로 렌더링
+            
+            // 파티클 물리 댐핑 설정 (빠르게 멈추도록 강화)
+            public const float LINEAR_DAMP = 8.0f;            // 파티클 속도 감쇠
         }
         
         // 유효성 검사 상수

@@ -17,8 +17,14 @@ namespace projectgodot
 
             SetupParticlesByType();
             
+            // Z-Index 설정으로 뒤쪽 레이어에 렌더링
+            ZIndex = GameConstants.DeathEffect.Z_INDEX;
+            
+            // 한 번만 방출되도록 설정
+            particles.OneShot = true;
+            particles.Emitting = true;
+            
             particles.Finished += QueueFree;
-            particles.Restart();
         }
 
         private void SetupParticlesByType()
@@ -63,10 +69,11 @@ namespace projectgodot
             // 공통 파티클 설정
             particles.Lifetime = GameConstants.DeathEffect.EFFECT_DURATION;
             
-            // 추가 시각 효과 설정
-            material.Direction = Vector3.Up; // 위쪽으로 분사
-            material.Spread = GameConstants.DeathEffect.SPREAD_ANGLE;
+            // 추가 시각 효과 설정 - 각도 범위로 직접 제어
+            material.AngleMin = 80.0f;  // 아래쪽 80도부터
+            material.AngleMax = 100.0f; // 아래쪽 100도까지 (순전히 아래쪽만)
             material.Gravity = Vector3.Down * GameConstants.DeathEffect.GRAVITY_STRENGTH;
+            material.Damping = new Vector2(GameConstants.DeathEffect.LINEAR_DAMP, GameConstants.DeathEffect.LINEAR_DAMP);
         }
     }
 

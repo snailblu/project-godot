@@ -47,10 +47,10 @@ namespace projectgodot.Tests
         [Test]
         public void VelocityScale_Constants_AreCorrectlyDefined()
         {
-            // Assert
-            Assert.That(GameConstants.DeathEffect.BASIC_VELOCITY_SCALE, Is.EqualTo(1.0f));
-            Assert.That(GameConstants.DeathEffect.RUNNER_VELOCITY_SCALE, Is.EqualTo(1.5f));
-            Assert.That(GameConstants.DeathEffect.TANK_VELOCITY_SCALE, Is.EqualTo(0.8f));
+            // Assert - 5-15픽셀 이동용으로 극도로 낮춘 값들
+            Assert.That(GameConstants.DeathEffect.BASIC_VELOCITY_SCALE, Is.EqualTo(0.05f));
+            Assert.That(GameConstants.DeathEffect.RUNNER_VELOCITY_SCALE, Is.EqualTo(0.08f));
+            Assert.That(GameConstants.DeathEffect.TANK_VELOCITY_SCALE, Is.EqualTo(0.03f));
         }
 
         [Test]
@@ -58,7 +58,7 @@ namespace projectgodot.Tests
         {
             // Assert
             Assert.That(GameConstants.DeathEffect.EFFECT_DURATION, Is.GreaterThan(0.0f));
-            Assert.That(GameConstants.DeathEffect.EFFECT_DURATION, Is.EqualTo(2.0f));
+            Assert.That(GameConstants.DeathEffect.EFFECT_DURATION, Is.EqualTo(10.0f));
         }
 
         [Test]
@@ -93,7 +93,7 @@ namespace projectgodot.Tests
             // Assert
             Assert.That(GameConstants.DeathEffect.SPREAD_ANGLE, Is.GreaterThan(0.0f));
             Assert.That(GameConstants.DeathEffect.GRAVITY_STRENGTH, Is.GreaterThan(0.0f));
-            Assert.That(GameConstants.DeathEffect.SPREAD_ANGLE, Is.EqualTo(45.0f));
+            Assert.That(GameConstants.DeathEffect.SPREAD_ANGLE, Is.EqualTo(15.0f));
             Assert.That(GameConstants.DeathEffect.GRAVITY_STRENGTH, Is.EqualTo(98.0f));
         }
 
