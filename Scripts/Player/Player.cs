@@ -1,4 +1,6 @@
 using Godot;
+using projectgodot.Components;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -12,6 +14,7 @@ namespace projectgodot
         private ISceneFactory _sceneFactory;
         private PowerupLogic _powerupLogic;
         private float _originalWeaponDamage;
+        private CameraShakeComponent _cameraShake;
         public HealthComponent Health { get; private set; }
 
         public override void _Ready()
@@ -51,6 +54,14 @@ namespace projectgodot
             
             // DashComponent를 자식 노드로 추가
             AddChild(_dash);
+            
+            // CameraShakeComponent 추가
+            _cameraShake = new CameraShakeComponent();
+            AddChild(_cameraShake);
+            
+            // 카메라 쉐이크 이벤트 연결
+            var events = GetNode<Events>("/root/Events");
+            events.CameraShakeRequested += OnCameraShakeRequested;
         }
 
         public override void _PhysicsProcess(double delta)
@@ -64,6 +75,12 @@ namespace projectgodot
                 if (direction != Vector2.Zero)
                 {
                     _dash.StartDash(direction);
+                    
+                    // 대시 시작 시 임팩트 쉐이크
+                    var events = GetNode<Events>("/root/Events");
+                    events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                        GameConstants.CameraShake.DASH_INTENSITY, 
+                        GameConstants.CameraShake.DASH_DURATION);
                 }
             }
 
@@ -72,6 +89,12 @@ namespace projectgodot
             {
                 Health.TakeDamage(10);
                 GD.Print($"Player took 10 damage! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+                
+                // 테스트 데미지 시에도 쉐이크
+                var events = GetNode<Events>("/root/Events");
+                events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                    GameConstants.CameraShake.HEAVY_INTENSITY, 
+                    GameConstants.CameraShake.HEAVY_DURATION);
             }
 
             // 2. TDD로 검증된 로직 클래스를 이용해 속도 계산
@@ -131,6 +154,11 @@ namespace projectgodot
             var events = GetNode<Events>("/root/Events");
             events.EmitSignal(Events.SignalName.PlayerFiredWeapon);
             
+            // 총 발사 시 가벼운 카메라 쉐이크
+            events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                GameConstants.CameraShake.LIGHT_INTENSITY, 
+                GameConstants.CameraShake.LIGHT_DURATION);
+            
             // SceneFactory를 통해 발사체 생성
             var direction = (GetGlobalMousePosition() - GlobalPosition).Normalized();
             _sceneFactory.CreateProjectile(_projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
@@ -151,6 +179,12 @@ namespace projectgodot
                 // 체력 10 감소
                 Health.TakeDamage(10);
                 GD.Print($"Player took 10 damage from zombie! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+                
+                // 데미지를 받을 때 강한 카메라 쉐이크
+                var events = GetNode<Events>("/root/Events");
+                events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                    GameConstants.CameraShake.HEAVY_INTENSITY, 
+                    GameConstants.CameraShake.HEAVY_DURATION);
             }
         }
 
@@ -183,6 +217,11 @@ namespace projectgodot
             _weapon.Damage = newDamage;
             
             GD.Print($"Powerup applied! Damage: {_originalWeaponDamage} -> {newDamage} for {duration} seconds");
+        }
+
+        private void OnCameraShakeRequested(float intensity, float duration)
+        {
+            _cameraShake?.StartShake(intensity, duration);
         }
 
         private void OnHealthChanged(int currentHealth)

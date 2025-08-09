@@ -59,10 +59,16 @@ namespace projectgodot
 
         private void OnDied()
         {
-            
-            // 이벤트 버스를 통해 ZombieDied 이벤트 발생 (100점)
             var events = GetNode<Events>("/root/Events");
+            
+            // 기본 점수 이벤트 발생 (100점)
             events.EmitSignal(Events.SignalName.ZombieDied, 100);
+            
+            // 강화된 사망 효과 이벤트 발생 (좀비 타입과 위치 전달)
+            events.EmitSignal(Events.SignalName.ZombieDeathEffectRequested, (int)ZombieType.Basic, GlobalPosition);
+            
+            // 화면 플래시 효과 요청
+            events.EmitSignal(Events.SignalName.ScreenFlashRequested);
             
             QueueFree(); // 죽으면 사라짐
         }
