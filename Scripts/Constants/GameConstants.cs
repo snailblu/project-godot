@@ -114,6 +114,32 @@ namespace projectgodot.Constants
         }
         
         // 유효성 검사 상수
+        // 총알 효과 설정
+        public static class BulletEffects
+        {
+            // 총구 화염 효과
+            public const int MUZZLE_FLASH_PARTICLE_COUNT = 15;
+            public const float MUZZLE_FLASH_DURATION = 0.1f;
+            public const float MUZZLE_FLASH_SCALE_MIN = 1.0f;
+            public const float MUZZLE_FLASH_SCALE_MAX = 2.5f;
+            public const float MUZZLE_FLASH_VELOCITY = 200.0f;
+            
+            // 총알 트레일 효과
+            public const int BULLET_TRAIL_PARTICLE_COUNT = 20;
+            public const float TRAIL_LIFETIME = 0.3f;
+            public const float TRAIL_WIDTH = 2.0f;
+            public const float TRAIL_FADE_SPEED = 3.0f;
+            
+            // 벽 충돌 스파크 효과  
+            public const int WALL_HIT_SPARK_COUNT = 25;
+            public const float SPARK_VELOCITY_MIN = 100.0f;
+            public const float SPARK_VELOCITY_MAX = 300.0f;
+            public const float SPARK_DURATION = 0.4f;
+            public const float SPARK_SCALE_MIN = 0.5f;
+            public const float SPARK_SCALE_MAX = 1.5f;
+            public const float SPARK_GRAVITY = 98.0f;
+        }
+
         public static class Validation
         {
             public const int MINIMUM_POSITIVE_VALUE = 0;

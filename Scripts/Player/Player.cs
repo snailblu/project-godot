@@ -159,8 +159,19 @@ namespace projectgodot
                 GameConstants.CameraShake.LIGHT_INTENSITY, 
                 GameConstants.CameraShake.LIGHT_DURATION);
             
-            // SceneFactory를 통해 발사체 생성
+            // 총구 화염 효과 생성
             var direction = (GetGlobalMousePosition() - GlobalPosition).Normalized();
+#if !TEST_ENVIRONMENT
+            var muzzleFlashEffect = new MuzzleFlashEffect();
+            GetTree().CurrentScene.AddChild(muzzleFlashEffect);
+            muzzleFlashEffect.GlobalPosition = GlobalPosition;
+            
+            // 총구 화염이 총구 방향을 향하도록 회전
+            muzzleFlashEffect.Rotation = direction.Angle();
+            muzzleFlashEffect.StartEffect();
+#endif
+            
+            // SceneFactory를 통해 발사체 생성
             _sceneFactory.CreateProjectile(_projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
         }
 
