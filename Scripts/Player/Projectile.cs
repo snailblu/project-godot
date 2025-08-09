@@ -1,12 +1,13 @@
 using Godot;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
     public partial class Projectile : Area2D
     {
         public Vector2 Direction { get; set; } = Vector2.Up;
-        public float Speed { get; set; } = 600.0f;
-        public int Damage { get; set; } = 10;
+        public float Speed { get; set; } = GameConstants.Projectile.DEFAULT_SPEED;
+        public int Damage { get; set; } = GameConstants.Projectile.DEFAULT_DAMAGE;
 
         public override void _Ready()
         {

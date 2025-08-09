@@ -23,7 +23,14 @@ namespace projectgodot
             _dash = new DashComponent();
 
             // SceneFactory 찾기 (GameManager에서 제공될 예정)
-            _sceneFactory = GetNode<SceneFactory>("/root/Main/GameManager/SceneFactory");
+            // 현재 씬에서 SceneFactory를 동적으로 찾기
+            var sceneRoot = GetTree().CurrentScene;
+            _sceneFactory = sceneRoot.FindChild("SceneFactory", true) as ISceneFactory;
+            
+            if (_sceneFactory == null)
+            {
+                GD.PrintErr("SceneFactory를 찾을 수 없습니다. 현재 씬에서 SceneFactory 노드를 찾을 수 없습니다.");
+            }
 
             // 무기 시스템 초기화 - 권총: 초당 4발 (0.25초 쿨다운)
             _weapon = new WeaponComponent(cooldown: 0.25f);
@@ -108,6 +115,11 @@ namespace projectgodot
         private void OnDeath()
         {
             GD.Print("Player has died!");
+            
+            // 게임 오버 이벤트 발생
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.GameOver);
+            
             QueueFree(); // 씬 트리에서 노드를 제거
         }
 

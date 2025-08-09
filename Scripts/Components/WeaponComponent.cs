@@ -1,4 +1,5 @@
 using System;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -6,7 +7,7 @@ namespace projectgodot
     {
         private readonly float _cooldown;
         private float _cooldownTimer;
-        public float Damage { get; set; } = 10f;
+        public float Damage { get; set; } = GameConstants.Weapon.DEFAULT_DAMAGE;
         
         public event Action OnShoot;
 

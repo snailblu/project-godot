@@ -41,19 +41,16 @@ namespace projectgodot
 
         private void OnPlayerFiredWeapon()
         {
-            GD.Print("무기 발사 사운드 재생");
             weaponFirePlayer.Play();
         }
 
         private void OnZombieTookDamage()
         {
-            GD.Print("좀비 피격 사운드 재생");
             zombieDamagePlayer.Play();
         }
 
         private void OnPlayerTookDamage()
         {
-            GD.Print("플레이어 피격 사운드 재생");
             playerDamagePlayer.Play();
         }
 

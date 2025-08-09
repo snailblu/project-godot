@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://lqs8mb2a26vv"]
+[gd_scene load_steps=4 format=3 uid="uid://dkg2fw5wfvcji"]
 
 [ext_resource type="Script" uid="uid://l317esb8rlmg" path="res://Scripts/Zombies/Zombie.cs" id="1_8n7s9"]
 [ext_resource type="Texture2D" uid="uid://d4cu0kxi6ybqp" path="res://icon.svg" id="2_g6hu2"]
@@ -7,8 +7,6 @@
 size = Vector2(162.5, 166.4)
 
 [node name="TankZombie" type="CharacterBody2D"]
-collision_layer = 2
-collision_mask = 1
 script = ExtResource("1_8n7s9")
 MoveSpeed = 600.0
 InitialHealth = 100

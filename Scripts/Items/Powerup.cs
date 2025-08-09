@@ -1,11 +1,12 @@
 using Godot;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
     public partial class Powerup : Area2D
     {
-        [Export] public float DamageMultiplier { get; set; } = 2.0f;
-        [Export] public float Duration { get; set; } = 5.0f;
+        [Export] public float DamageMultiplier { get; set; } = GameConstants.Powerup.DEFAULT_DAMAGE_MULTIPLIER;
+        [Export] public float Duration { get; set; } = GameConstants.Powerup.DEFAULT_DURATION;
         
         private void _on_body_entered(Node2D body)
         {

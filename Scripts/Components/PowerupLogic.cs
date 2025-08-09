@@ -1,4 +1,5 @@
 using System;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -8,8 +9,8 @@ namespace projectgodot
     /// </summary>
     public class PowerupLogic
     {
-        public float DamageMultiplier { get; set; } = 2.0f;
-        public float Duration { get; set; } = 5.0f;
+        public float DamageMultiplier { get; set; } = GameConstants.Powerup.DEFAULT_DAMAGE_MULTIPLIER;
+        public float Duration { get; set; } = GameConstants.Powerup.DEFAULT_DURATION;
         public bool IsActive { get; private set; }
         
         private DateTime _activationTime;

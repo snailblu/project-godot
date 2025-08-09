@@ -1,11 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://dd4veg0dawqxy"]
+[gd_scene load_steps=9 format=3 uid="uid://c2sc7uvrbvn6o"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Scenes/Zombies/Zombie.tscn" id="2_zombie"]
 [ext_resource type="Script" uid="uid://di8302x8a4pv8" path="res://Scripts/Managers/GameManager.cs" id="3_gamemanager"]
 [ext_resource type="PackedScene" uid="uid://bxiciup2bitpk" path="res://Scenes/Zombies/RunnerZombie.tscn" id="3_lgr22"]
 [ext_resource type="Script" uid="uid://bamgv7tdye4wx" path="res://Scripts/Systems/SceneFactory.cs" id="4_scenefactory"]
-[ext_resource type="PackedScene" uid="uid://lqs8mb2a26vv" path="res://Scenes/Zombies/TankZombie.tscn" id="4_trn2v"]
+[ext_resource type="PackedScene" uid="uid://dkg2fw5wfvcji" path="res://Scenes/Zombies/TankZombie.tscn" id="4_trn2v"]
 [ext_resource type="PackedScene" uid="uid://cr846fm1ixgpc" path="res://Scenes/UI/HUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" uid="uid://bw2j3k4l5m6n7" path="res://Scenes/Items/powerup.tscn" id="6_powerup"]
 

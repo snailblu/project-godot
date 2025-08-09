@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using Godot;
+using projectgodot.Helpers;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
@@ -42,7 +44,7 @@ namespace projectgodot
 
         public void StartWave(List<Vector2> spawnPositions)
         {
-            if (spawnPositions == null || spawnPositions.Count == 0)
+            if (!ValidationHelper.IsValidCollection(spawnPositions))
             {
                 throw new ArgumentException("스폰 위치가 필요합니다", nameof(spawnPositions));
             }
@@ -63,20 +65,13 @@ namespace projectgodot
                 }
 
                 // 각 종류의 좀비들을 스폰하기
-                Random random = new Random();
                 int spawnIndex = 0;
                 
                 foreach (var (zombieScene, count) in zombieComposition)
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        var baseSpawnPosition = spawnPositions[spawnIndex % spawnPositions.Count];
-                        
-                        // 랜덤 오프셋 적용 (반경 50픽셀 내에서)
-                        float offsetX = (float)(random.NextDouble() * 100 - 50); // -50 ~ 50
-                        float offsetY = (float)(random.NextDouble() * 100 - 50); // -50 ~ 50
-                        var spawnPosition = baseSpawnPosition + new Vector2(offsetX, offsetY);
-                        
+                        var spawnPosition = SpawnHelper.GetRandomizedSpawnPosition(spawnPositions, spawnIndex);
                         _zombieSpawner.SpawnZombie(zombieScene, spawnPosition);
                         spawnIndex++;
                     }
@@ -89,16 +84,9 @@ namespace projectgodot
                 ZombiesRemainingInWave = zombiesToSpawn;
 
                 // 좀비들 스폰하기
-                Random random = new Random();
                 for (int i = 0; i < zombiesToSpawn; i++)
                 {
-                    var baseSpawnPosition = spawnPositions[i % spawnPositions.Count];
-                    
-                    // 랜덤 오프셋 적용 (반경 50픽셀 내에서)
-                    float offsetX = (float)(random.NextDouble() * 100 - 50); // -50 ~ 50
-                    float offsetY = (float)(random.NextDouble() * 100 - 50); // -50 ~ 50
-                    var spawnPosition = baseSpawnPosition + new Vector2(offsetX, offsetY);
-                    
+                    var spawnPosition = SpawnHelper.GetRandomizedSpawnPosition(spawnPositions, i);
                     _zombieSpawner.SpawnZombie(_zombieScene, spawnPosition);
                 }
             }

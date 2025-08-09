@@ -1,5 +1,7 @@
 using System;
 using Godot;
+using projectgodot.Helpers;
+using projectgodot.Utils;
 
 namespace projectgodot
 {
@@ -20,23 +22,12 @@ namespace projectgodot
 
         public void TakeDamage(int amount)
         {
-            if (amount <= 0) return;
+            if (!ValidationHelper.IsPositiveValue(amount)) return;
             
             var previousHealth = CurrentHealth;
             CurrentHealth -= amount;
             
-            // 데미지 로그 출력 (테스트 환경에서는 스킵)
-            if (System.Environment.GetEnvironmentVariable("TEST_ENVIRONMENT") != "true")
-            {
-                try
-                {
-                    GD.Print($"Zombie took {amount} damage! Current health: {CurrentHealth}/{MaxHealth}");
-                }
-                catch
-                {
-                    // Godot 환경이 아닐 때는 무시
-                }
-            }
+            GodotLogger.LogDamage(amount, CurrentHealth, MaxHealth);
             
             if (CurrentHealth < 0)
             {
@@ -48,24 +39,14 @@ namespace projectgodot
             // 이전 체력이 0보다 크고, 현재 체력이 0 이하가 되었을 때 (즉, 방금 죽었을 때)
             if (previousHealth > 0 && CurrentHealth <= 0)
             {
-                if (System.Environment.GetEnvironmentVariable("TEST_ENVIRONMENT") != "true")
-                {
-                    try
-                    {
-                        GD.Print("Zombie DIED!");
-                    }
-                    catch
-                    {
-                        // Godot 환경이 아닐 때는 무시
-                    }
-                }
+                GodotLogger.LogDeath();
                 Died?.Invoke();
             }
         }
 
         public void Heal(int amount)
         {
-            if (amount <= 0) return;
+            if (!ValidationHelper.IsPositiveValue(amount)) return;
             
             CurrentHealth += amount;
             

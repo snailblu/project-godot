@@ -18,7 +18,6 @@ namespace projectgodot
         private ZombieSpawner _zombieSpawner;
         private SceneFactory _sceneFactory;
         private ScoreManager _scoreManager;
-        private GameStateManager _gameStateManager;
 
         public override void _Ready()
         {
@@ -35,9 +34,6 @@ namespace projectgodot
             
             // 점수 매니저 초기화
             _scoreManager = new ScoreManager();
-            
-            // 게임 상태 매니저 초기화
-            _gameStateManager = new GameStateManager();
             
             // GameController 초기화 (테스트된 비즈니스 로직)
             _gameController = new GameController(_waveManager, _zombieSpawner);
