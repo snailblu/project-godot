@@ -70,6 +70,18 @@ namespace projectgodot
         [Signal]
         public delegate void ShowMainMenuRequestedEventHandler();
 
+        // 카메라 쉐이크 이벤트들
+        [Signal]
+        public delegate void CameraShakeRequestedEventHandler(float intensity, float duration);
+
+        // 사망 효과 이벤트들
+        [Signal]
+        public delegate void ZombieDeathEffectRequestedEventHandler(int zombieType, Vector2 position);
+
+        // 화면 플래시 효과 이벤트
+        [Signal]
+        public delegate void ScreenFlashRequestedEventHandler();
+
         public override void _Ready()
         {
             GD.Print("Events 이벤트 버스가 초기화되었습니다.");

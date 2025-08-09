@@ -9,7 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://cr846fm1ixgpc" path="res://Scenes/UI/HUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" uid="uid://bw2j3k4l5m6n7" path="res://Scenes/Items/powerup.tscn" id="6_powerup"]
 
-[node name="Main" type="Node"]
+[node name="Main2" type="Node"]
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("_spawnLocationsContainer")]
 script = ExtResource("3_gamemanager")

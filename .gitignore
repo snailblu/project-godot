@@ -4,3 +4,8 @@
 addons/
 .DS_Store
 Exports/
+
+# Serena cache
+.serena/
+
+*.uid

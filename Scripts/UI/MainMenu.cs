@@ -90,11 +90,4 @@ namespace projectgodot
         }
     }
 
-    public static class EnvironmentHelper
-    {
-        public static bool IsTestEnvironment()
-        {
-            return System.Environment.GetEnvironmentVariable("TEST_ENVIRONMENT") == "true";
-        }
-    }
 }

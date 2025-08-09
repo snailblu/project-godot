@@ -1,5 +1,7 @@
 using Godot;
 using System.Linq;
+using projectgodot.Constants;
+using projectgodot.Utils;
 
 namespace projectgodot
 {
@@ -21,7 +23,7 @@ namespace projectgodot
 
         public override void _Ready()
         {
-            GD.Print("GameManager 초기화 시작");
+            GodotLogger.SafePrint("GameManager 초기화 시작");
             
             // SceneFactory 자식 노드에서 찾기
             _sceneFactory = GetNode<SceneFactory>("SceneFactory");
@@ -58,11 +60,17 @@ namespace projectgodot
             // 전역 이벤트 버스 구독
             var events = GetNode<Events>("/root/Events");
             events.ZombieDied += OnZombieDied;
+            events.ZombieDeathEffectRequested += OnZombieDeathEffectRequested;
+            events.ScreenFlashRequested += OnScreenFlashRequested;
+            
+            // 화면 플래시 효과 노드 추가
+            var screenFlash = new ScreenFlashEffect();
+            AddChild(screenFlash);
             
             // 게임 시작 후 3초 뒤에 첫 웨이브 시작
             var timer = GetTree().CreateTimer(3.0f);
             timer.Timeout += () => {
-                GD.Print("첫 번째 웨이브를 시작합니다!");
+                GodotLogger.SafePrint("첫 번째 웨이브를 시작합니다!");
                 StartNextWave();
             };
         }
@@ -74,24 +82,24 @@ namespace projectgodot
             
             if (spawnLocations == null || spawnLocations.Count == 0)
             {
-                GD.PrintErr("스폰 위치를 찾을 수 없습니다!");
+                GodotLogger.SafePrint("ERROR: 스폰 위치를 찾을 수 없습니다!");
                 return;
             }
 
             var spawnPositions = spawnLocations.Select(loc => loc.GlobalPosition).ToList();
             _gameController.StartWave(spawnPositions);
             
-            GD.Print($"웨이브 {_waveManager.CurrentWaveNumber} 시작! {_gameController.ZombiesRemainingInWave}마리 좀비 스폰");
+            GodotLogger.SafePrint($"웨이브 {_waveManager.CurrentWaveNumber} 시작! {_gameController.ZombiesRemainingInWave}마리 좀비 스폰");
         }
 
         private void OnWaveCleared()
         {
-            GD.Print("모든 좀비 처치 완료! 웨이브 클리어!");
+            GodotLogger.SafePrint("모든 좀비 처치 완료! 웨이브 클리어!");
             
             // 5초 후에 다음 웨이브 시작
             var timer = GetTree().CreateTimer(5.0f);
             timer.Timeout += () => {
-                GD.Print($"다음 웨이브 준비 중... ({_waveManager.CurrentWaveNumber + 1}번째 웨이브)");
+                GodotLogger.SafePrint($"다음 웨이브 준비 중... ({_waveManager.CurrentWaveNumber + 1}번째 웨이브)");
                 StartNextWave();
             };
         }
@@ -103,7 +111,7 @@ namespace projectgodot
             var events = GetNode<Events>("/root/Events");
             events.EmitSignal(Events.SignalName.WaveChanged, waveNumber);
             
-            GD.Print($"웨이브 {waveNumber} 시작 이벤트 발생");
+            GodotLogger.SafePrint($"웨이브 {waveNumber} 시작 이벤트 발생");
         }
 
         private void OnScoreChanged(int newScore)
@@ -112,14 +120,35 @@ namespace projectgodot
             var events = GetNode<Events>("/root/Events");
             events.EmitSignal(Events.SignalName.ScoreChanged, newScore);
             
-            GD.Print($"점수 변경: {newScore}");
+            GodotLogger.SafePrint($"점수 변경: {newScore}");
         }
 
         private void OnZombieDied(int scoreValue)
         {
             // 좀비가 죽으면 점수 추가
             _scoreManager.AddScore(scoreValue);
-            GD.Print($"좀비 처치! +{scoreValue}점");
+            GodotLogger.SafePrint($"좀비 처치! +{scoreValue}점");
+            
+            // 좀비 사망 시 중간 강도 카메라 쉐이크
+            var events = GetNode<Events>("/root/Events");
+            events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                GameConstants.CameraShake.MEDIUM_INTENSITY, 
+                GameConstants.CameraShake.MEDIUM_DURATION);
+        }
+
+        private void OnZombieDeathEffectRequested(int zombieType, Vector2 position)
+        {
+            // DeathEffect 동적 생성
+            var deathEffect = new DeathEffect();
+            deathEffect.ZombieType = (ZombieType)zombieType;
+            GetTree().CurrentScene.AddChild(deathEffect);
+            deathEffect.GlobalPosition = position;
+        }
+
+        private void OnScreenFlashRequested()
+        {
+            // ScreenFlashEffect는 이미 씬에 추가되어 자동으로 처리됨
+            GodotLogger.SafePrint("화면 플래시 효과 실행");
         }
 
         // 디버그용: 수동으로 웨이브 시작
@@ -129,7 +158,7 @@ namespace projectgodot
             {
                 if (keyEvent.Keycode == Key.Space && !_waveManager.IsWaveActive)
                 {
-                    GD.Print("수동 웨이브 시작 (스페이스바)");
+                    GodotLogger.SafePrint("수동 웨이브 시작 (스페이스바)");
                     StartNextWave();
                 }
             }
