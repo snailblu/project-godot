@@ -11,12 +11,9 @@ namespace projectgodot
 
         public override void _Ready()
         {
-            particles = GetNode<GpuParticles2D>("GPUParticles2D");
-            if (particles == null)
-            {
-                particles = new GpuParticles2D();
-                AddChild(particles);
-            }
+            // GPUParticles2D를 직접 생성
+            particles = new GpuParticles2D();
+            AddChild(particles);
 
             SetupParticlesByType();
             
