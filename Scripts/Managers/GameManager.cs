@@ -138,9 +138,27 @@ namespace projectgodot
 
         private void OnZombieDeathEffectRequested(int zombieType, Vector2 position)
         {
-            // DeathEffect 동적 생성
-            var deathEffect = new DeathEffect();
-            deathEffect.ZombieType = (ZombieType)zombieType;
+            // ZombieType에 따라 적절한 DeathEffect 씬 로드
+            PackedScene deathEffectScene;
+            var type = (ZombieType)zombieType;
+            
+            switch (type)
+            {
+                case ZombieType.Basic:
+                    deathEffectScene = ResourceLoader.Load<PackedScene>("res://Scenes/Effects/BasicDeathEffect.tscn");
+                    break;
+                case ZombieType.Runner:
+                    deathEffectScene = ResourceLoader.Load<PackedScene>("res://Scenes/Effects/RunnerDeathEffect.tscn");
+                    break;
+                case ZombieType.Tank:
+                    deathEffectScene = ResourceLoader.Load<PackedScene>("res://Scenes/Effects/TankDeathEffect.tscn");
+                    break;
+                default:
+                    deathEffectScene = ResourceLoader.Load<PackedScene>("res://Scenes/Effects/BasicDeathEffect.tscn");
+                    break;
+            }
+            
+            var deathEffect = deathEffectScene.Instantiate() as DeathEffect;
             GetTree().CurrentScene.AddChild(deathEffect);
             deathEffect.GlobalPosition = position;
         }
