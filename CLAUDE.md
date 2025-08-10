@@ -20,6 +20,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `/Applications/Godot_mono.app/Contents/MacOS/Godot --headless --build-solutions` - 헤드리스 모드에서 C# 솔루션 빌드
 - `/Applications/Godot_mono.app/Contents/MacOS/Godot --headless --quit` - 헤드리스 모드로 프로젝트 초기화
 
+### 배포
+
+- `./deploy.sh snailblu/zombie-defense-game` - itch.io에 Windows/macOS 빌드 배포
+- `./deploy.sh snailblu/zombie-defense-game v1.0.0` - 특정 버전으로 배포
+- **배포 전 요구사항**: `butler login` 명령어로 itch.io 계정 로그인 필요
+- **게임 URL**: https://snailblu.itch.io/zombie-defense-game
+
 ## 아키텍처 및 코드 구조
 
 ### 핵심 아키텍처 원칙
