@@ -18,7 +18,7 @@ namespace projectgodot.Constants
         // 대시 설정  
         public static class Dash
         {
-            public const float DEFAULT_DASH_SPEED = 1000f;
+            public const float DEFAULT_DASH_SPEED = 300f;
             public const float DEFAULT_DASH_DURATION = 0.2f;
         }
         

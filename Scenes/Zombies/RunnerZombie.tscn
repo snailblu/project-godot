@@ -148,18 +148,20 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_upgny"]
-size = Vector2(20, 21)
+size = Vector2(10, 21)
 
 [node name="RunnerZombie" type="CharacterBody2D"]
 collision_layer = 2
+collision_mask = 5
 script = ExtResource("1_8n7s9")
 MoveSpeed = 3600.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)
+position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_qk6cp")
 animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-2.5, 1.5)
+position = Vector2(-5, -13)
 shape = SubResource("RectangleShape2D_upgny")
