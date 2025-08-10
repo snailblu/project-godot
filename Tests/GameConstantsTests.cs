@@ -22,7 +22,7 @@ namespace projectgodot.Tests
         [Test]
         public void DashConstants_ShouldHaveExpectedValues()
         {
-            Assert.That(GameConstants.Dash.DEFAULT_DASH_SPEED, Is.EqualTo(1000f));
+            Assert.That(GameConstants.Dash.DEFAULT_DASH_SPEED, Is.EqualTo(300f));
             Assert.That(GameConstants.Dash.DEFAULT_DASH_DURATION, Is.EqualTo(0.2f));
         }
         
