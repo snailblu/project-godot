@@ -28,8 +28,11 @@ namespace projectgodot
             AddChild(flashRect);
             
             // 이벤트 연결
-            var events = GetNode<Events>("/root/Events");
-            events.ScreenFlashRequested += OnScreenFlashRequested;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.ScreenFlashRequested += OnScreenFlashRequested;
+            }
         }
 
         private void OnScreenFlashRequested()
@@ -61,7 +64,7 @@ namespace projectgodot
 
         public override void _ExitTree()
         {
-            var events = GetNodeOrNull<Events>("/root/Events");
+            var events = EventsHelper.GetEventsNodeSafe(this);
             if (events != null)
             {
                 events.ScreenFlashRequested -= OnScreenFlashRequested;

@@ -30,11 +30,14 @@ namespace projectgodot
             projectileHitPlayer.Stream = GD.Load<AudioStream>("res://Audio/Effects/hit.wav");
 
             // Events 싱글톤의 시그널들을 구독
-            var events = GetNode<Events>("/root/Events");
-            events.PlayerFiredWeapon += OnPlayerFiredWeapon;
-            events.ZombieTookDamage += OnZombieTookDamage;
-            events.PlayerTookDamage += OnPlayerTookDamage;
-            events.ProjectileHitWall += OnProjectileHitWall;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.PlayerFiredWeapon += OnPlayerFiredWeapon;
+                events.ZombieTookDamage += OnZombieTookDamage;
+                events.PlayerTookDamage += OnPlayerTookDamage;
+                events.ProjectileHitWall += OnProjectileHitWall;
+            }
 
             GD.Print("SoundManager가 초기화되었습니다.");
         }
@@ -63,11 +66,14 @@ namespace projectgodot
         public override void _ExitTree()
         {
             // 시그널 연결 해제
-            var events = GetNode<Events>("/root/Events");
-            events.PlayerFiredWeapon -= OnPlayerFiredWeapon;
-            events.ZombieTookDamage -= OnZombieTookDamage;
-            events.PlayerTookDamage -= OnPlayerTookDamage;
-            events.ProjectileHitWall -= OnProjectileHitWall;
+            var events = EventsHelper.GetEventsNodeSafe(this);
+            if (events != null)
+            {
+                events.PlayerFiredWeapon -= OnPlayerFiredWeapon;
+                events.ZombieTookDamage -= OnZombieTookDamage;
+                events.PlayerTookDamage -= OnPlayerTookDamage;
+                events.ProjectileHitWall -= OnProjectileHitWall;
+            }
         }
     }
 }

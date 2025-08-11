@@ -64,8 +64,7 @@ namespace projectgodot
 #endif // 충돌 방향 반대로 스파크
                 
                 // 좀비가 아닌 대상(벽 등)에 부딪혔을 때 사운드 이벤트 발생
-                var events = GetNode<Events>("/root/Events");
-                events.EmitSignal(Events.SignalName.ProjectileHitWall);
+                EventsHelper.EmitSignalSafe(this, Events.SignalName.ProjectileHitWall);
                 QueueFree();
             }
         }

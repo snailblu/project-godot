@@ -39,8 +39,7 @@ namespace projectgodot
             _logic.RestartGame(); // 비즈니스 로직 호출 (현재는 빈 메서드)
             
             // 게임 재시작 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.StartGameRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.StartGameRequested);
             
             Hide();
         }
@@ -50,8 +49,7 @@ namespace projectgodot
             _logic.GoToMainMenu(); // 비즈니스 로직 호출 (현재는 빈 메서드)
             
             // 메인 메뉴 표시 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.ShowMainMenuRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ShowMainMenuRequested);
             
             Hide();
         }
@@ -61,8 +59,7 @@ namespace projectgodot
             _logic.QuitGame(); // 비즈니스 로직 호출 (현재는 빈 메서드)
             
             // 게임 종료 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.QuitGameRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.QuitGameRequested);
         }
 
         public void ShowGameOverScreen(int finalScore, int finalWave)

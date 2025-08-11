@@ -10,10 +10,13 @@ namespace projectgodot
             GD.Print("SceneManager 초기화 완료");
             
             // 전역 이벤트 구독
-            var events = GetNode<Events>("/root/Events");
-            events.StartGameRequested += OnStartGameRequested;
-            events.ShowMainMenuRequested += OnShowMainMenuRequested;
-            events.GameOver += OnGameOver;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.StartGameRequested += OnStartGameRequested;
+                events.ShowMainMenuRequested += OnShowMainMenuRequested;
+                events.GameOver += OnGameOver;
+            }
         }
 
         public void ChangeToMainMenu()
@@ -34,7 +37,7 @@ namespace projectgodot
             
             // GameData에 현재 게임 정보 저장
             var gameData = GetNode<GameData>("/root/GameData");
-            var events = GetNode<Events>("/root/Events");
+            var events = EventsHelper.GetEventsNode(this);
             
             // 현재 점수와 웨이브 정보를 GameData에 저장
             // 이 정보들은 GameManager에서 관리되므로 이벤트를 통해 가져와야 함
@@ -64,7 +67,7 @@ namespace projectgodot
         public override void _ExitTree()
         {
             // 이벤트 연결 해제
-            var events = GetNodeOrNull<Events>("/root/Events");
+            var events = EventsHelper.GetEventsNodeSafe(this);
             if (events != null)
             {
                 events.StartGameRequested -= OnStartGameRequested;

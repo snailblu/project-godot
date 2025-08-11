@@ -58,10 +58,13 @@ namespace projectgodot
             _scoreManager.ScoreChanged += OnScoreChanged;
             
             // 전역 이벤트 버스 구독
-            var events = GetNode<Events>("/root/Events");
-            events.ZombieDied += OnZombieDied;
-            events.ZombieDeathEffectRequested += OnZombieDeathEffectRequested;
-            events.ScreenFlashRequested += OnScreenFlashRequested;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.ZombieDied += OnZombieDied;
+                events.ZombieDeathEffectRequested += OnZombieDeathEffectRequested;
+                events.ScreenFlashRequested += OnScreenFlashRequested;
+            }
             
             // 화면 플래시 효과 노드 추가
             var screenFlash = new ScreenFlashEffect();
@@ -108,8 +111,7 @@ namespace projectgodot
         private void OnWaveStarted(int waveNumber, int zombiesToSpawn)
         {
             // WaveManager의 이벤트를 전역 이벤트 버스로 전달
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.WaveChanged, waveNumber);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.WaveChanged, waveNumber);
             
             GodotLogger.SafePrint($"웨이브 {waveNumber} 시작 이벤트 발생");
         }
@@ -117,8 +119,7 @@ namespace projectgodot
         private void OnScoreChanged(int newScore)
         {
             // ScoreManager의 이벤트를 전역 이벤트 버스로 전달
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.ScoreChanged, newScore);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ScoreChanged, newScore);
             
             GodotLogger.SafePrint($"점수 변경: {newScore}");
         }
@@ -130,8 +131,7 @@ namespace projectgodot
             GodotLogger.SafePrint($"좀비 처치! +{scoreValue}점");
             
             // 좀비 사망 시 중간 강도 카메라 쉐이크
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.CameraShakeRequested, 
                 GameConstants.CameraShake.MEDIUM_INTENSITY, 
                 GameConstants.CameraShake.MEDIUM_DURATION);
         }

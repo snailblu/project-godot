@@ -10,7 +10,7 @@ namespace projectgodot.Components
 
         public override void _Ready()
         {
-            _events = GetNode<Events>("/root/Events");
+            _events = EventsHelper.GetEventsNode(this);
         }
 
         // 카메라 쉐이크 이벤트들

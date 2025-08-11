@@ -80,8 +80,6 @@ namespace projectgodot
             if (_isDying) return; // 중복 처리 방지
             _isDying = true;
             
-            var events = GetNode<Events>("/root/Events");
-            
             // 충돌 비활성화 (총알이 더 이상 맞지 않게)
             SetCollisionLayerValue(2, false);
             
@@ -89,13 +87,13 @@ namespace projectgodot
             _animatedSprite.Play("die");
             
             // 기본 점수 이벤트 발생 (100점)
-            events.EmitSignal(Events.SignalName.ZombieDied, 100);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ZombieDied, 100);
             
             // 강화된 사망 효과 이벤트 발생 (좀비 타입과 위치 전달)
-            events.EmitSignal(Events.SignalName.ZombieDeathEffectRequested, (int)ZombieType.Basic, GlobalPosition);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ZombieDeathEffectRequested, (int)ZombieType.Basic, GlobalPosition);
             
             // 화면 플래시 효과 요청
-            events.EmitSignal(Events.SignalName.ScreenFlashRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ScreenFlashRequested);
             
             // die 애니메이션이 끝날 때까지 대기
             await ToSignal(_animatedSprite, AnimatedSprite2D.SignalName.AnimationFinished);
@@ -114,8 +112,7 @@ namespace projectgodot
             _animatedSprite.Play("hit");
             
             // 좀비가 데미지를 받았을 때 사운드 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.ZombieTookDamage);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ZombieTookDamage);
             
             // 0.1초 후 walk 애니메이션으로 복귀
             await ToSignal(GetTree().CreateTimer(0.1f), SceneTreeTimer.SignalName.Timeout);

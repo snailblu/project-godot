@@ -15,8 +15,7 @@ namespace projectgodot
                 ApplyPowerup(player);
                 
                 // 파워업 수집 이벤트 발생
-                var events = GetNode<Events>("/root/Events");
-                events?.EmitSignal(Events.SignalName.PowerupCollected);
+                EventsHelper.EmitSignalSafe(this, Events.SignalName.PowerupCollected);
                 
                 // 파워업 아이템 제거
                 QueueFree();

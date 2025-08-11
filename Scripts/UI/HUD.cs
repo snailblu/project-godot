@@ -40,10 +40,13 @@ namespace projectgodot
 			_waveLabel = GetNode<Label>("UIContainer/WaveLabel");
 
 			// 이벤트 버스 구독
-			var events = GetNode<Events>("/root/Events");
-			events.PlayerHealthChanged += OnPlayerHealthChanged;
-			events.ScoreChanged += OnScoreChanged;
-			events.WaveChanged += OnWaveChanged;
+			var events = EventsHelper.GetEventsNode(this);
+			if (events != null)
+			{
+				events.PlayerHealthChanged += OnPlayerHealthChanged;
+				events.ScoreChanged += OnScoreChanged;
+				events.WaveChanged += OnWaveChanged;
+			}
 		}
 
 		// 이벤트 핸들러들

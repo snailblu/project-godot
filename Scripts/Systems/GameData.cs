@@ -18,10 +18,13 @@ namespace projectgodot
             GD.Print("GameData 초기화 완료");
             
             // Events 시스템과 연결하여 데이터 자동 업데이트
-            var events = GetNode<Events>("/root/Events");
-            events.ScoreChanged += OnScoreChanged;
-            events.WaveChanged += OnWaveChanged;
-            events.PlayerHealthChanged += OnPlayerHealthChanged;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.ScoreChanged += OnScoreChanged;
+                events.WaveChanged += OnWaveChanged;
+                events.PlayerHealthChanged += OnPlayerHealthChanged;
+            }
         }
         
         public void ResetGameData()
@@ -65,7 +68,7 @@ namespace projectgodot
         public override void _ExitTree()
         {
             // 이벤트 연결 해제
-            var events = GetNodeOrNull<Events>("/root/Events");
+            var events = EventsHelper.GetEventsNodeSafe(this);
             if (events != null)
             {
                 events.ScoreChanged -= OnScoreChanged;

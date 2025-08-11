@@ -88,8 +88,11 @@ namespace projectgodot
             _collisionHandler.DamageReceived += OnDamageReceived;
             
             // 카메라 쉐이크 이벤트 연결
-            var events = GetNode<Events>("/root/Events");
-            events.CameraShakeRequested += OnCameraShakeRequested;
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+            {
+                events.CameraShakeRequested += OnCameraShakeRequested;
+            }
         }
 
         private Vector2 _currentMovementDirection;
@@ -209,8 +212,7 @@ namespace projectgodot
                 GD.Print($"Player took 10 damage from zombie! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
                 
                 // 데미지를 받을 때 강한 카메라 쉐이크
-                var events = GetNode<Events>("/root/Events");
-                events.EmitSignal(Events.SignalName.CameraShakeRequested, 
+                EventsHelper.EmitSignalSafe(this, Events.SignalName.CameraShakeRequested, 
                     GameConstants.CameraShake.HEAVY_INTENSITY, 
                     GameConstants.CameraShake.HEAVY_DURATION);
             }

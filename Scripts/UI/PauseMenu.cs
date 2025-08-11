@@ -49,17 +49,20 @@ namespace projectgodot
         private void OnSettingsPressed()
         {
             _logic.ShowSettings();
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ShowSettingsRequested);
         }
 
         private void OnMainMenuPressed()
         {
             _logic.GoToMainMenu();
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ShowMainMenuRequested);
             TogglePause();
         }
 
         private void OnQuitPressed()
         {
             _logic.QuitGame();
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.QuitGameRequested);
         }
 
         public void TogglePause()
@@ -74,12 +77,7 @@ namespace projectgodot
 
         private Events GetEventsNode()
         {
-            if (EnvironmentHelper.IsTestEnvironment())
-            {
-                return null;
-            }
-
-            return GetNode<Events>("/root/Events");
+            return EventsHelper.GetEventsNode(this);
         }
 
         public override void _ExitTree()
@@ -105,31 +103,20 @@ namespace projectgodot
 
         public void ShowSettings()
         {
-            var events = GetEventsNode();
-            events?.EmitSignal(Events.SignalName.ShowSettingsRequested);
+            // 설정 관련 비즈니스 로직이 필요한 경우 여기에 추가
+            // 이벤트 발생은 UI 클래스에서 처리
         }
 
         public void GoToMainMenu()
         {
-            var events = GetEventsNode();
-            events?.EmitSignal(Events.SignalName.ShowMainMenuRequested);
+            // 메인 메뉴 이동 관련 비즈니스 로직이 필요한 경우 여기에 추가
+            // 이벤트 발생은 UI 클래스에서 처리
         }
 
         public void QuitGame()
         {
-            var events = GetEventsNode();
-            events?.EmitSignal(Events.SignalName.QuitGameRequested);
-        }
-
-        private Events GetEventsNode()
-        {
-            if (EnvironmentHelper.IsTestEnvironment())
-            {
-                return null;
-            }
-
-            var tree = Engine.GetSingleton("SceneTree") as SceneTree;
-            return tree?.GetFirstNodeInGroup("events") as Events;
+            // 게임 종료 관련 비즈니스 로직이 필요한 경우 여기에 추가
+            // 이벤트 발생은 UI 클래스에서 처리
         }
     }
 }

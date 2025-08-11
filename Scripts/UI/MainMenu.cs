@@ -34,8 +34,7 @@ namespace projectgodot
             gameData.StartNewGame();
             
             // 게임 시작 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.StartGameRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.StartGameRequested);
         }
 
         private void OnSettingsPressed()
@@ -43,8 +42,7 @@ namespace projectgodot
             _logic.ShowSettings(); // 비즈니스 로직 호출 (현재는 빈 메서드)
             
             // 설정 화면 표시 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.ShowSettingsRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.ShowSettingsRequested);
         }
 
         private void OnQuitPressed()
@@ -52,8 +50,7 @@ namespace projectgodot
             _logic.QuitGame(); // 비즈니스 로직 호출 (현재는 빈 메서드)
             
             // 게임 종료 이벤트 발생
-            var events = GetNode<Events>("/root/Events");
-            events.EmitSignal(Events.SignalName.QuitGameRequested);
+            EventsHelper.EmitSignalSafe(this, Events.SignalName.QuitGameRequested);
         }
 
         public override void _ExitTree()
