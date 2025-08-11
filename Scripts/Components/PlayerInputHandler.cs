@@ -24,7 +24,7 @@ namespace projectgodot.Components
         public override void _PhysicsProcess(double delta)
         {
             // 1. 이동 입력 받기
-            Vector2 direction = Input.GetVector("ui_left", "ui_right", "ui_up", "ui_down");
+            Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
             MovementRequested?.Invoke(direction);
             
             // 2. 대시 입력 처리 (Shift 키)

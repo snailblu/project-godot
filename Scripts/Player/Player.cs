@@ -32,6 +32,8 @@ namespace projectgodot
         
         public HealthComponent Health { get; private set; }
 
+        private AnimationTree _animationTree;
+
         public override void _Ready()
         {
             // TDD로 검증된 클래스들을 인스턴스화 (컴포지션 패턴)
@@ -39,7 +41,7 @@ namespace projectgodot
             _playerMovement = new PlayerMovement();
             Health = new HealthComponent(100);
             _dash = new DashComponent();
-            
+
             // 허기 시스템 초기화
             _hungerComponent = new HungerComponent(GameConstants.Hunger.DEFAULT_MAX_HUNGER);
 
@@ -47,7 +49,7 @@ namespace projectgodot
             // 현재 씬에서 SceneFactory를 동적으로 찾기
             var sceneRoot = GetTree().CurrentScene;
             _sceneFactory = sceneRoot.FindChild("SceneFactory", true) as ISceneFactory;
-            
+
             if (_sceneFactory == null)
             {
                 GD.PrintErr("SceneFactory를 찾을 수 없습니다. 현재 씬에서 SceneFactory 노드를 찾을 수 없습니다.");
@@ -57,7 +59,7 @@ namespace projectgodot
             _weapon = new WeaponComponent(cooldown: 0.25f);
             _weapon.OnShoot += SpawnProjectile;
             _originalWeaponDamage = _weapon.Damage;
-            
+
             // 파워업 로직 초기화
             _powerupLogic = new PowerupLogic();
 
@@ -66,35 +68,41 @@ namespace projectgodot
 
             // 사망 이벤트 연결
             Health.Died += OnDeath;
-            
+
             // 체력 변경 이벤트를 전역 이벤트 버스로 전달
             Health.HealthChanged += OnHealthChanged;
-            
+
             // 허기 시스템 이벤트 연결
             _hungerComponent.HungerChanged += OnHungerChanged;
             _hungerComponent.StarvationStarted += OnStarvationStarted;
-            
+
             // DashComponent를 자식 노드로 추가
             AddChild(_dash);
-            
+
             // CameraShakeComponent 추가
             _cameraShake = new CameraShakeComponent();
             AddChild(_cameraShake);
-            
+
             // 새로운 컴포넌트들 초기화
             _inputHandler = new PlayerInputHandler();
             _animationController = new PlayerAnimationController();
             _collisionHandler = new PlayerCollisionHandler();
             _eventBridge = new PlayerEventBridge();
-            
+
             AddChild(_inputHandler);
             AddChild(_animationController);
             AddChild(_collisionHandler);
             AddChild(_eventBridge);
-            
+
+            // Player 노드의 자식으로 있는 AnimationTree 노드를 찾습니다.
+            _animationTree = GetNode<AnimationTree>("AnimationTree");
+
+            // PlayerAnimationController를 초기화하고 AnimationTree를 전달합니다.
+            _animationController.Initialize(_animationTree);
+
             // 컴포넌트들 초기화 및 이벤트 연결
             _collisionHandler.Initialize(_dash);
-            
+
             // 이벤트 연결
             _inputHandler.MovementRequested += OnMovementRequested;
             _inputHandler.DashRequested += OnDashRequested;
@@ -102,7 +110,7 @@ namespace projectgodot
             _inputHandler.TestDamageRequested += OnTestDamageRequested;
             _inputHandler.EatFoodRequested += OnEatFoodRequested;
             _collisionHandler.DamageReceived += OnDamageReceived;
-            
+
             // 카메라 쉐이크 이벤트 연결
             var events = EventsHelper.GetEventsNode(this);
             if (events != null)
@@ -138,10 +146,11 @@ namespace projectgodot
 
             // Godot 노드에 결과 적용
             Velocity = calculatedVelocity;
+
             MoveAndSlide();
 
             // 애니메이션 업데이트
-            _animationController.UpdateAnimation(Velocity);
+            _animationController.UpdateAnimation(_currentMovementDirection);
 
             // 무기 쿨다운 업데이트
             _weapon.Process((float)delta);
