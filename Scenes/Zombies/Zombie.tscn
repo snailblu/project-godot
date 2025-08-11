@@ -148,16 +148,18 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5678"]
-size = Vector2(19.625, 21)
+size = Vector2(10, 25.5)
 
 [node name="Zombie" type="CharacterBody2D"]
 collision_layer = 2
+collision_mask = 5
 script = ExtResource("1_8n7s9")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_iaqtk")
 animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-3.8125, 1.5)
+position = Vector2(-5, -12.75)
 shape = SubResource("RectangleShape2D_5678")

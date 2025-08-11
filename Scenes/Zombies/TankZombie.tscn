@@ -148,21 +148,23 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5678"]
-size = Vector2(20, 21)
+size = Vector2(10.6667, 21)
 
 [node name="TankZombie" type="CharacterBody2D"]
 collision_layer = 2
+collision_mask = 5
 script = ExtResource("1_8n7s9")
 MoveSpeed = 600.0
 InitialHealth = 100
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 modulate = Color(0, 1, 0, 1)
+position = Vector2(0, -24)
 scale = Vector2(1.5, 1.5)
 sprite_frames = SubResource("SpriteFrames_dmimt")
 animation = &"die"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(-2, 0.5)
+position = Vector2(-8, -16)
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_5678")

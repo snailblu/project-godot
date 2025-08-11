@@ -44,7 +44,7 @@ namespace projectgodot.Tests
         [Test]
         public void DashLogic_DefaultValues_AreSetCorrectly()
         {
-            Assert.That(_dashLogic.DashSpeed, Is.EqualTo(1000f));
+            Assert.That(_dashLogic.DashSpeed, Is.EqualTo(300f));
             Assert.That(_dashLogic.DashDuration, Is.EqualTo(0.2f));
         }
         

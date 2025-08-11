@@ -60,23 +60,24 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_43tru"]
 radius = 6.0
-height = 24.0
+height = 16.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_damage"]
 radius = 5.9
-height = 22.1
+height = 16.0
 
 [node name="Player" type="CharacterBody2D"]
-collision_mask = 0
+collision_mask = 4
 script = ExtResource("1_b8c5k")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_fk5o5")
 animation = &"walk"
 frame_progress = 0.736366
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-visible = false
+position = Vector2(0, -8)
 shape = SubResource("CapsuleShape2D_43tru")
 
 [node name="DamageArea" type="Area2D" parent="."]
@@ -84,8 +85,7 @@ collision_layer = 0
 collision_mask = 2
 
 [node name="DamageCollision" type="CollisionShape2D" parent="DamageArea"]
-visible = false
-position = Vector2(0, 2)
+position = Vector2(0, -8)
 shape = SubResource("CapsuleShape2D_damage")
 
 [node name="Camera2D" type="Camera2D" parent="."]
