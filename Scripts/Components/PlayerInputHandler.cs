@@ -14,11 +14,11 @@ namespace projectgodot.Components
         public event Action TestDamageRequested;
         public event Action EatFoodRequested;
 
-        private bool _isDashing = false;
+        private PlayerStateMachine _stateMachine;
 
-        public void SetDashingState(bool isDashing)
+        public void Initialize(PlayerStateMachine stateMachine)
         {
-            _isDashing = isDashing;
+            _stateMachine = stateMachine;
         }
 
         public override void _PhysicsProcess(double delta)
@@ -27,8 +27,8 @@ namespace projectgodot.Components
             Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
             MovementRequested?.Invoke(direction);
             
-            // 2. 대시 입력 처리 (Shift 키)
-            if (Input.IsActionJustPressed("dash") && !_isDashing)
+            // 2. 대시 입력 처리 (Shift 키) - StateMachine을 통해 대시 가능 여부 확인
+            if (Input.IsActionJustPressed("dash") && _stateMachine?.CanPerformAction("dash") == true)
             {
                 if (direction != Vector2.Zero)
                 {

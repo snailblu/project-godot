@@ -79,7 +79,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - 매직 넘버 금지: GameConstants 사용
 - 중복 코드 제거: Helper 클래스 활용
 - 유효성 검사: ValidationHelper 사용
-- 로깅: GodotLogger.SafePrint() 사용
+- 로깅: GD.Print() 대신 GodotLogger.SafePrint() 사용
 
 ### C# 프로젝트 설정
 
@@ -136,11 +136,13 @@ Godot AutoLoad로 등록된 전역 이벤트 시스템:
 ### 레이어 분리 원칙
 
 **비즈니스 로직 레이어** (순수 C#, Godot 독립적)
+
 - `*Logic` 클래스들 (예: MainMenuLogic, GameOverScreenLogic)
 - 순수 C# 클래스로 구현, Godot API 접근 금지
 - 테스트 가능해야 하며 EnvironmentHelper 사용 불필요
 
 **UI/Godot 통합 레이어** (Godot 의존적)
+
 - Godot Node를 상속받는 클래스들
 - `GetNode<T>("/root/NodeName")` 방식으로 AutoLoad 접근
 - `Engine.GetSingleton()` 사용 금지 (존재하지 않는 API)
@@ -148,6 +150,7 @@ Godot AutoLoad로 등록된 전역 이벤트 시스템:
 ### Godot API 접근 규칙
 
 **✅ 올바른 방법:**
+
 ```csharp
 // Node 클래스 내에서
 var events = GetNode<Events>("/root/Events");
@@ -155,6 +158,7 @@ var gameData = GetNode<GameData>("/root/GameData");
 ```
 
 **❌ 잘못된 방법:**
+
 ```csharp
 // Logic 클래스에서 Godot API 접근 시도
 var tree = Engine.GetSingleton("SceneTree") as SceneTree; // 에러 발생
@@ -163,6 +167,7 @@ var tree = Engine.GetSingleton("SceneTree") as SceneTree; // 에러 발생
 ### 의존성 주입 패턴
 
 Logic 클래스가 Godot 데이터에 접근해야 할 경우:
+
 1. **Option 1**: UI 클래스에서 필요한 데이터를 Logic 클래스 메서드에 파라미터로 전달
 2. **Option 2**: Logic 클래스는 순수 계산만 담당하고, UI 클래스에서 결과를 받아 Godot API 호출
 
@@ -175,17 +180,20 @@ Logic 클래스가 Godot 데이터에 접근해야 할 경우:
 ## 씬 매니징 시스템
 
 ### 씬 구조
+
 - **MainMenu.tscn**: 메인 메뉴 (프로젝트 시작 씬)
 - **Game.tscn**: 게임플레이 씬 (이전 Main.tscn)
 - **GameOverScreen.tscn**: 게임 오버 씬
 
 ### AutoLoad 싱글톤
+
 - **Events**: 전역 이벤트 버스
 - **SoundManager**: 사운드 관리
 - **GameData**: 씬 간 데이터 전달 (점수, 웨이브, 체력)
 - **SceneManager**: 씬 전환 관리
 
 ### 게임 플로우
+
 1. 게임 시작 → MainMenu.tscn 표시
 2. Start 버튼 → GameData 초기화 + Game.tscn으로 전환
 3. 플레이어 사망 → GameOver.tscn으로 전환

@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://hlg1a20kb0h0"]
+[gd_scene load_steps=41 format=3 uid="uid://hlg1a20kb0h0"]
 
 [ext_resource type="Script" uid="uid://cbvtv67xy2ffk" path="res://Scripts/Player/Player.cs" id="1_b8c5k"]
 [ext_resource type="Texture2D" uid="uid://c0qnso8yqex2r" path="res://Textures/Characters/Player.png" id="3_h54ih"]
@@ -244,7 +244,27 @@ _data = {
 &"run_up": SubResource("Animation_fk5o5")
 }
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_ft8w5"]
+animation = &"attack_left"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_0kmp4"]
+animation = &"attack_up"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_i5acl"]
+animation = &"attack_right"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_epg6k"]
+animation = &"attack_down"
+
 [sub_resource type="AnimationNodeBlendSpace2D" id="AnimationNodeBlendSpace2D_esmjy"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_ft8w5")
+blend_point_0/pos = Vector2(-0.9, 0)
+blend_point_1/node = SubResource("AnimationNodeAnimation_0kmp4")
+blend_point_1/pos = Vector2(0, 1)
+blend_point_2/node = SubResource("AnimationNodeAnimation_i5acl")
+blend_point_2/pos = Vector2(0.9, 0)
+blend_point_3/node = SubResource("AnimationNodeAnimation_epg6k")
+blend_point_3/pos = Vector2(0, -1)
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h54ih"]
 animation = &"idle_left"
@@ -355,7 +375,7 @@ libraries = {
 tree_root = SubResource("AnimationNodeBlendTree_0u84n")
 advance_expression_base_node = NodePath("..")
 anim_player = NodePath("../AnimationPlayer")
-parameters/StateMachine/AttackState/blend_position = Vector2(0, 0)
+parameters/StateMachine/AttackState/blend_position = Vector2(-0.0702426, -0.447099)
 parameters/StateMachine/MoveState/IdleState/blend_position = Vector2(0.0990416, 0.320819)
 parameters/StateMachine/MoveState/RunState/blend_position = Vector2(0.213802, 0.180887)
 
