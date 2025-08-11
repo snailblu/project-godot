@@ -11,7 +11,7 @@ namespace projectgodot
         private PlayerData _playerData;
         private PlayerMovement _playerMovement;
         private WeaponComponent _weapon;
-        private DashComponent _dash;
+        public DashComponent _dash;
         private PackedScene _projectileScene;
         private ISceneFactory _sceneFactory;
         private PowerupLogic _powerupLogic;
@@ -24,8 +24,11 @@ namespace projectgodot
         private PlayerCollisionHandler _collisionHandler;
         private PlayerEventBridge _eventBridge;
         
+        // State Machine (중앙화된 상태 관리)
+        private PlayerStateMachine _stateMachine;
+        
         // 허기 시스템
-        private HungerComponent _hungerComponent;
+        public HungerComponent _hungerComponent;
         
         // 누적 굶주림 데미지 (작은 deltaTime 값들을 누적하기 위함)
         private float _accumulatedStarvationDamage = 0f;
@@ -36,7 +39,7 @@ namespace projectgodot
 
         public override void _Ready()
         {
-            // TDD로 검증된 클래스들을 인스턴스화 (컴포지션 패턴)
+            // 인스턴스화 (컴포지션 패턴)
             _playerData = new PlayerData();
             _playerMovement = new PlayerMovement();
             Health = new HealthComponent(100);
@@ -88,7 +91,11 @@ namespace projectgodot
             _animationController = new PlayerAnimationController();
             _collisionHandler = new PlayerCollisionHandler();
             _eventBridge = new PlayerEventBridge();
+            
+            // State Machine 초기화 (가장 먼저 추가해야 다른 컴포넌트들이 참조 가능)
+            _stateMachine = new PlayerStateMachine();
 
+            AddChild(_stateMachine); // StateMachine을 먼저 추가
             AddChild(_inputHandler);
             AddChild(_animationController);
             AddChild(_collisionHandler);
@@ -101,7 +108,7 @@ namespace projectgodot
             _animationController.Initialize(_animationTree);
 
             // 컴포넌트들 초기화 및 이벤트 연결
-            _collisionHandler.Initialize(_dash);
+            _collisionHandler.Initialize(_stateMachine);
 
             // 이벤트 연결
             _inputHandler.MovementRequested += OnMovementRequested;
@@ -123,30 +130,41 @@ namespace projectgodot
 
         public override void _PhysicsProcess(double delta)
         {
-            // 대시 상태 업데이트
+            // StateMachine에 현재 입력 상태 업데이트
+            _stateMachine?.UpdateMovementInput(_currentMovementDirection.Length() > 0.1f);
+            
+            // 대시 상태 업데이트 (기존 로직 유지)
             _inputHandler.SetDashingState(_dash.IsDashing);
             
-            // TDD로 검증된 로직 클래스를 이용해 속도 계산
+            // 이동 처리 (StateMachine 상태와 무관하게 물리 처리)
             Vector2 calculatedVelocity;
             
-            if (_dash.IsDashing)
+            // StateMachine에서 이동 가능한지 체크
+            if (_stateMachine?.CanPerformAction("move") == true)
             {
-                // 대시 중일 때는 대시 속도 사용
-                calculatedVelocity = _currentMovementDirection * _dash.DashSpeed;
+                if (_stateMachine.IsInState(PlayerState.Dashing))
+                {
+                    // 대시 중일 때는 대시 속도 사용
+                    calculatedVelocity = _currentMovementDirection * _dash.DashSpeed;
+                }
+                else
+                {
+                    // 일반 이동
+                    calculatedVelocity = _playerMovement.CalculateVelocity(
+                        _currentMovementDirection, 
+                        _playerData.MovementSpeed, 
+                        (float)delta
+                    );
+                }
             }
             else
             {
-                // 일반 이동
-                calculatedVelocity = _playerMovement.CalculateVelocity(
-                    _currentMovementDirection, 
-                    _playerData.MovementSpeed, 
-                    (float)delta
-                );
+                // 이동 불가능한 상태 (Dead, TakingDamage 등)
+                calculatedVelocity = Vector2.Zero;
             }
 
             // Godot 노드에 결과 적용
             Velocity = calculatedVelocity;
-
             MoveAndSlide();
 
             // 애니메이션 업데이트
@@ -158,7 +176,7 @@ namespace projectgodot
             // 파워업 효과 업데이트
             UpdatePowerupEffect();
             
-            // 허기 시스템 업데이트
+            // 허기 시스템 업데이트 (StateMachine과 무관한 백그라운드 프로세스)
             UpdateHungerSystem((float)delta);
             
             // 음식 섭취 입력 처리
@@ -173,19 +191,29 @@ namespace projectgodot
 
         private void OnDashRequested(Vector2 direction)
         {
-            _dash.StartDash(direction);
-            _eventBridge.RequestDashShake();
+            // StateMachine을 통해 대시 상태 전환 요청
+            if (_stateMachine?.RequestDash() == true)
+            {
+                _dash.StartDash(direction);
+                _eventBridge.RequestDashShake();
+            }
         }
 
         private void OnShootRequested()
         {
-            _weapon.Shoot();
+            // StateMachine을 통해 발사 상태 전환 요청
+            if (_stateMachine?.RequestShoot() == true)
+            {
+                _weapon.Shoot();
+            }
         }
 
         private void OnTestDamageRequested()
         {
             Health.TakeDamage(10);
             GD.Print($"Player took 10 damage! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            // StateMachine을 통해 데미지 상태 전환 요청
+            _stateMachine?.RequestTakeDamage();
             _eventBridge.RequestHeavyShake();
         }
 
@@ -198,6 +226,8 @@ namespace projectgodot
         {
             Health.TakeDamage(damage);
             GD.Print($"Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            // StateMachine을 통해 데미지 상태 전환 요청
+            _stateMachine?.RequestTakeDamage();
             _eventBridge.RequestHeavyShake();
         }
 
@@ -236,8 +266,8 @@ namespace projectgodot
             // 부딪힌 대상이 Zombie 클래스인지 확인
             if (body is Zombie)
             {
-                // 대시 중에는 무적 상태
-                if (_dash.IsDashing)
+                // StateMachine을 통해 대시 상태 확인 (무적 상태)
+                if (_stateMachine?.IsInState(PlayerState.Dashing) == true)
                 {
                     GD.Print("Player is dashing - immune to damage!");
                     return;
@@ -301,6 +331,7 @@ namespace projectgodot
             _hungerComponent.ProcessHunger(deltaTime, GameConstants.Hunger.HUNGER_DECREASE_RATE);
             
             // 굶주림 상태일 때 체력 감소 (누적 방식으로 처리)
+            // StateMachine의 Starving 상태에서도 이 로직이 실행됨
             if (_hungerComponent.IsStarving)
             {
                 if (deltaTime > 0)
@@ -324,6 +355,8 @@ namespace projectgodot
                 // 굶주림 상태가 아닐 때는 누적 데미지 초기화
                 _accumulatedStarvationDamage = 0f;
             }
+            
+            // 굶주림 상태 전환은 StateMachine의 CheckAutoStateTransitions에서 자동으로 처리됨
         }
 
         private void OnHungerChanged(int currentHunger)

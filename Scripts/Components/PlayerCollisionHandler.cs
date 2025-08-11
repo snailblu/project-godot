@@ -9,12 +9,12 @@ namespace projectgodot.Components
         // 충돌 이벤트
         public event Action<int> DamageReceived;
 
-        private DashComponent _dashComponent;
+        private PlayerStateMachine _stateMachine;
         private const int ZOMBIE_DAMAGE = 10;
 
-        public void Initialize(DashComponent dashComponent)
+        public void Initialize(PlayerStateMachine stateMachine)
         {
-            _dashComponent = dashComponent;
+            _stateMachine = stateMachine;
         }
 
         public void HandleBodyEntered(Node2D body)
@@ -22,8 +22,8 @@ namespace projectgodot.Components
             // 부딪힌 대상이 Zombie 클래스인지 확인
             if (body is Zombie)
             {
-                // 대시 중에는 무적 상태
-                if (_dashComponent != null && _dashComponent.IsDashing)
+                // StateMachine을 통해 대시 상태 확인 (무적 상태)
+                if (_stateMachine?.IsInState(PlayerState.Dashing) == true)
                 {
                     GD.Print("Player is dashing - immune to damage!");
                     return;
