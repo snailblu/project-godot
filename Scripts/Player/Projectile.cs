@@ -51,7 +51,7 @@ namespace projectgodot
                 hitEffect.GlobalPosition = GlobalPosition;
                 
                 zombie.Health.TakeDamage(Damage);
-                QueueFree();
+                CallDeferred(MethodName.QueueFree);
             }
             else
             {
@@ -65,7 +65,7 @@ namespace projectgodot
                 
                 // 좀비가 아닌 대상(벽 등)에 부딪혔을 때 사운드 이벤트 발생
                 EventsHelper.EmitSignalSafe(this, Events.SignalName.ProjectileHitWall);
-                QueueFree();
+                CallDeferred(MethodName.QueueFree);
             }
         }
     }

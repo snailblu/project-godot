@@ -82,6 +82,16 @@ namespace projectgodot
         [Signal]
         public delegate void ScreenFlashRequestedEventHandler();
 
+        // 허기 시스템 이벤트들
+        [Signal]
+        public delegate void HungerChangedEventHandler(int currentHunger, int maxHunger);
+
+        [Signal] 
+        public delegate void StarvationStartedEventHandler();
+
+        [Signal]
+        public delegate void FoodConsumedEventHandler();
+
         public override void _Ready()
         {
             GD.Print("Events 이벤트 버스가 초기화되었습니다.");

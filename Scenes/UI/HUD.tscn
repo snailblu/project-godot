@@ -1,6 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://cr846fm1ixgpc"]
+[gd_scene load_steps=6 format=3 uid="uid://cr846fm1ixgpc"]
 
 [ext_resource type="Script" uid="uid://cj8drv07whco4" path="res://Scripts/UI/HUD.cs" id="1_0k7xw"]
+[ext_resource type="Script" uid="uid://xymp04qov6i4" path="res://Scripts/UI/HeartHealthBar.cs" id="2_heart"]
+[ext_resource type="Texture2D" uid="uid://dr2b4x2verxuu" path="res://Textures/UI/heart(Full).tres" id="3_xaom8"]
+[ext_resource type="Texture2D" uid="uid://vhyeltqrqnek" path="res://Textures/UI/heart(Half).tres" id="4_ykvyr"]
+[ext_resource type="Texture2D" uid="uid://sitdkjtil3y5" path="res://Textures/UI/heart(Empty).tres" id="5_lelo4"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_0k7xw")
@@ -13,14 +17,58 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HealthBar" type="TextureProgressBar" parent="UIContainer"]
-layout_mode = 0
+[node name="HeartHealthBar" type="Control" parent="UIContainer"]
+anchors_preset = 0
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 20.0
 offset_top = -40.0
-offset_right = 220.0
+offset_right = 150.0
 offset_bottom = -20.0
+grow_vertical = 0
+script = ExtResource("2_heart")
+HeartFullTexture = ExtResource("3_xaom8")
+HeartHalfTexture = ExtResource("4_ykvyr")
+HeartEmptyTexture = ExtResource("5_lelo4")
+
+[node name="Heart1" type="TextureRect" parent="UIContainer/HeartHealthBar"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -16.0
+offset_right = 32.0
+offset_bottom = 16.0
+grow_vertical = 2
+
+[node name="Heart2" type="TextureRect" parent="UIContainer/HeartHealthBar"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 40.0
+offset_top = -16.0
+offset_right = 72.0
+offset_bottom = 16.0
+grow_vertical = 2
+
+[node name="Heart3" type="TextureRect" parent="UIContainer/HeartHealthBar"]
+layout_mode = 0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 80.0
+offset_top = -16.0
+offset_right = 112.0
+offset_bottom = 16.0
+grow_vertical = 2
+
+[node name="HungerBar" type="TextureProgressBar" parent="UIContainer"]
+modulate = Color(1, 0.647, 0, 1)
+layout_mode = 0
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -80.0
+offset_right = 220.0
+offset_bottom = -60.0
 grow_vertical = 0
 value = 100.0
 
@@ -45,3 +93,14 @@ offset_right = -20.0
 offset_bottom = 70.0
 grow_horizontal = 0
 text = "Wave: 1"
+
+[node name="HungerLabel" type="Label" parent="UIContainer"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -150.0
+offset_top = 80.0
+offset_right = -20.0
+offset_bottom = 100.0
+grow_horizontal = 0
+text = "Hunger: 100/100"

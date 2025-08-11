@@ -42,6 +42,12 @@ namespace projectgodot
             // 현재 점수와 웨이브 정보를 GameData에 저장
             // 이 정보들은 GameManager에서 관리되므로 이벤트를 통해 가져와야 함
             
+            // 물리 콜백 중 안전한 씬 전환을 위해 call_deferred 사용
+            CallDeferred(nameof(DeferredChangeToGameOver));
+        }
+
+        private void DeferredChangeToGameOver()
+        {
             GetTree().ChangeSceneToFile(GameConstants.Scenes.GAME_OVER);
         }
 

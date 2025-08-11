@@ -152,5 +152,14 @@ namespace projectgodot.Constants
             public const double MINIMUM_PERCENTAGE = 0.0;
             public const double MAXIMUM_PERCENTAGE = 100.0;
         }
+
+        // 허기 시스템 설정
+        public static class Hunger
+        {
+            public const int DEFAULT_MAX_HUNGER = 100;
+            public const float HUNGER_DECREASE_RATE = 2.0f;      // 초당 감소량
+            public const float STARVATION_DAMAGE_RATE = 5.0f;    // 굶주림 시 초당 체력 감소
+            public const int FOOD_RESTORE_AMOUNT = 25;           // 음식 1개당 회복량
+        }
     }
 }

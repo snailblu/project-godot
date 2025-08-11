@@ -18,7 +18,7 @@ namespace projectgodot
                 EventsHelper.EmitSignalSafe(this, Events.SignalName.PowerupCollected);
                 
                 // 파워업 아이템 제거
-                QueueFree();
+                CallDeferred(MethodName.QueueFree);
             }
         }
         

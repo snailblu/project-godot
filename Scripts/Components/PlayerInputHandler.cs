@@ -12,6 +12,7 @@ namespace projectgodot.Components
         public event Action<Vector2> DashRequested;
         public event Action ShootRequested;
         public event Action TestDamageRequested;
+        public event Action EatFoodRequested;
 
         private bool _isDashing = false;
 
@@ -39,6 +40,15 @@ namespace projectgodot.Components
             if (Input.IsActionJustPressed("ui_accept"))
             {
                 TestDamageRequested?.Invoke();
+            }
+        }
+
+        // 음식 섭취 입력을 _Input 메서드에 추가
+        public void HandleEatFoodInput()
+        {
+            if (Input.IsActionJustPressed("ui_cancel"))
+            {
+                EatFoodRequested?.Invoke();
             }
         }
 

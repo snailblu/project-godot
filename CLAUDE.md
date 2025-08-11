@@ -190,3 +190,5 @@ Logic 클래스가 Godot 데이터에 접근해야 할 경우:
 2. Start 버튼 → GameData 초기화 + Game.tscn으로 전환
 3. 플레이어 사망 → GameOver.tscn으로 전환
 4. Restart/Main Menu → 해당 씬으로 전환
+
+- GodotLogger는 projectgodot.Utils 네임스페이스에 있다.
