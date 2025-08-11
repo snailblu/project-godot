@@ -39,78 +39,75 @@ namespace projectgodot
 
         public override void _Ready()
         {
-            // 인스턴스화 (컴포지션 패턴)
+            InitializeComponents();
+            InitializeStateMachine();
+            InitializeEventHandlers();
+        }
+
+        private void InitializeComponents()
+        {
+            // 핵심 컴포넌트 인스턴스화
             _playerData = new PlayerData();
             _playerMovement = new PlayerMovement();
             Health = new HealthComponent(100);
             _dash = new DashComponent();
-
-            // 허기 시스템 초기화
             _hungerComponent = new HungerComponent(GameConstants.Hunger.DEFAULT_MAX_HUNGER);
-
-            // SceneFactory 찾기 (GameManager에서 제공될 예정)
-            // 현재 씬에서 SceneFactory를 동적으로 찾기
-            var sceneRoot = GetTree().CurrentScene;
-            _sceneFactory = sceneRoot.FindChild("SceneFactory", true) as ISceneFactory;
-
-            if (_sceneFactory == null)
-            {
-                GD.PrintErr("SceneFactory를 찾을 수 없습니다. 현재 씬에서 SceneFactory 노드를 찾을 수 없습니다.");
-            }
-
-            // 무기 시스템 초기화 - 권총: 초당 4발 (0.25초 쿨다운)
+            
+            // 무기 시스템 초기화
             _weapon = new WeaponComponent(cooldown: 0.25f);
-            _weapon.OnShoot += SpawnProjectile;
             _originalWeaponDamage = _weapon.Damage;
-
-            // 파워업 로직 초기화
             _powerupLogic = new PowerupLogic();
-
-            // 발사체 씬 로드
             _projectileScene = GD.Load<PackedScene>("res://Scenes/Projectiles/projectile.tscn");
-
-            // 사망 이벤트 연결
-            Health.Died += OnDeath;
-
-            // 체력 변경 이벤트를 전역 이벤트 버스로 전달
-            Health.HealthChanged += OnHealthChanged;
-
-            // 허기 시스템 이벤트 연결
-            _hungerComponent.HungerChanged += OnHungerChanged;
-            _hungerComponent.StarvationStarted += OnStarvationStarted;
-
-            // DashComponent를 자식 노드로 추가
-            AddChild(_dash);
-
-            // CameraShakeComponent 추가
-            _cameraShake = new CameraShakeComponent();
-            AddChild(_cameraShake);
-
-            // 새로운 컴포넌트들 초기화
+            
+            // UI 및 효과 컴포넌트
             _inputHandler = new PlayerInputHandler();
             _animationController = new PlayerAnimationController();
             _collisionHandler = new PlayerCollisionHandler();
             _eventBridge = new PlayerEventBridge();
+            _cameraShake = new CameraShakeComponent();
             
-            // State Machine 초기화 (가장 먼저 추가해야 다른 컴포넌트들이 참조 가능)
-            _stateMachine = new PlayerStateMachine();
+            // SceneFactory 찾기
+            var sceneRoot = GetTree().CurrentScene;
+            _sceneFactory = sceneRoot.FindChild("SceneFactory", true) as ISceneFactory;
+            if (_sceneFactory == null)
+            {
+                GodotLogger.SafePrint("SceneFactory를 찾을 수 없습니다.");
+            }
+        }
 
-            AddChild(_stateMachine); // StateMachine을 먼저 추가
+        private void InitializeStateMachine()
+        {
+            // StateMachine을 먼저 추가하고 초기화
+            _stateMachine = new PlayerStateMachine();
+            AddChild(_stateMachine);
+            
+            // 다른 컴포넌트들 추가
+            AddChild(_dash);
+            AddChild(_cameraShake);
             AddChild(_inputHandler);
             AddChild(_animationController);
             AddChild(_collisionHandler);
             AddChild(_eventBridge);
-
-            // Player 노드의 자식으로 있는 AnimationTree 노드를 찾습니다.
+            
+            // 애니메이션 시스템 초기화
             _animationTree = GetNode<AnimationTree>("AnimationTree");
-
-            // PlayerAnimationController를 초기화하고 AnimationTree를 전달합니다.
             _animationController.Initialize(_animationTree);
-
-            // 컴포넌트들 초기화 및 이벤트 연결
+            
+            // StateMachine 연결
             _collisionHandler.Initialize(_stateMachine);
+            _inputHandler.Initialize(_stateMachine);
+        }
 
-            // 이벤트 연결
+        private void InitializeEventHandlers()
+        {
+            // 컴포넌트 이벤트 연결
+            _weapon.OnShoot += SpawnProjectile;
+            Health.Died += OnDeath;
+            Health.HealthChanged += OnHealthChanged;
+            _hungerComponent.HungerChanged += OnHungerChanged;
+            _hungerComponent.StarvationStarted += OnStarvationStarted;
+            
+            // 입력 이벤트 연결
             _inputHandler.MovementRequested += OnMovementRequested;
             _inputHandler.DashRequested += OnDashRequested;
             _inputHandler.ShootRequested += OnShootRequested;
@@ -118,7 +115,7 @@ namespace projectgodot
             _inputHandler.EatFoodRequested += OnEatFoodRequested;
             _collisionHandler.DamageReceived += OnDamageReceived;
 
-            // 카메라 쉐이크 이벤트 연결
+            // 전역 이벤트 연결
             var events = EventsHelper.GetEventsNode(this);
             if (events != null)
             {
@@ -132,9 +129,6 @@ namespace projectgodot
         {
             // StateMachine에 현재 입력 상태 업데이트
             _stateMachine?.UpdateMovementInput(_currentMovementDirection.Length() > 0.1f);
-            
-            // 대시 상태 업데이트 (기존 로직 유지)
-            _inputHandler.SetDashingState(_dash.IsDashing);
             
             // 이동 처리 (StateMachine 상태와 무관하게 물리 처리)
             Vector2 calculatedVelocity;
@@ -210,11 +204,7 @@ namespace projectgodot
 
         private void OnTestDamageRequested()
         {
-            Health.TakeDamage(10);
-            GD.Print($"Player took 10 damage! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
-            // StateMachine을 통해 데미지 상태 전환 요청
-            _stateMachine?.RequestTakeDamage();
-            _eventBridge.RequestHeavyShake();
+            ProcessDamage(10, "Player took 10 damage!");
         }
 
         private void OnEatFoodRequested()
@@ -224,8 +214,13 @@ namespace projectgodot
 
         private void OnDamageReceived(int damage)
         {
+            ProcessDamage(damage, "Damage received!");
+        }
+
+        private void ProcessDamage(int damage, string logMessage)
+        {
             Health.TakeDamage(damage);
-            GD.Print($"Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            GodotLogger.SafePrint($"{logMessage} Health: {Health.CurrentHealth}/{Health.MaxHealth}");
             // StateMachine을 통해 데미지 상태 전환 요청
             _stateMachine?.RequestTakeDamage();
             _eventBridge.RequestHeavyShake();
@@ -233,7 +228,7 @@ namespace projectgodot
 
         private void OnDeath()
         {
-            GD.Print("Player has died!");
+            GodotLogger.SafePrint("Player has died!");
             _eventBridge.NotifyGameOver();
             CallDeferred(MethodName.QueueFree);
         }
@@ -261,29 +256,6 @@ namespace projectgodot
             _sceneFactory.CreateProjectile(_projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
         }
 
-        private void OnBodyEntered(Node2D body)
-        {
-            // 부딪힌 대상이 Zombie 클래스인지 확인
-            if (body is Zombie)
-            {
-                // StateMachine을 통해 대시 상태 확인 (무적 상태)
-                if (_stateMachine?.IsInState(PlayerState.Dashing) == true)
-                {
-                    GD.Print("Player is dashing - immune to damage!");
-                    return;
-                }
-                
-                // 체력 10 감소
-                Health.TakeDamage(10);
-                GD.Print($"Player took 10 damage from zombie! Current health: {Health.CurrentHealth}/{Health.MaxHealth}");
-                
-                // 데미지를 받을 때 강한 카메라 쉐이크
-                EventsHelper.EmitSignalSafe(this, Events.SignalName.CameraShakeRequested, 
-                    GameConstants.CameraShake.HEAVY_INTENSITY, 
-                    GameConstants.CameraShake.HEAVY_DURATION);
-            }
-        }
-
         private void UpdatePowerupEffect()
         {
             _powerupLogic.Update();
@@ -293,7 +265,7 @@ namespace projectgodot
             {
                 // 원래 데미지로 복구
                 _weapon.Damage = _originalWeaponDamage;
-                GD.Print($"Powerup effect ended! Damage restored to {_originalWeaponDamage}");
+                GodotLogger.SafePrint($"Powerup effect ended! Damage restored to {_originalWeaponDamage}");
             }
         }
         
@@ -301,7 +273,7 @@ namespace projectgodot
         {
             if (_powerupLogic.IsActive) 
             {
-                GD.Print("Powerup already active, ignoring new one");
+                GodotLogger.SafePrint("Powerup already active, ignoring new one");
                 return;
             }
             
@@ -312,7 +284,7 @@ namespace projectgodot
             var newDamage = _powerupLogic.CalculateDamage(_originalWeaponDamage);
             _weapon.Damage = newDamage;
             
-            GD.Print($"Powerup applied! Damage: {_originalWeaponDamage} -> {newDamage} for {duration} seconds");
+            GodotLogger.SafePrint($"Powerup applied! Damage: {_originalWeaponDamage} -> {newDamage} for {duration} seconds");
         }
 
         private void OnCameraShakeRequested(float intensity, float duration)
@@ -328,35 +300,35 @@ namespace projectgodot
         // 허기 시스템 관련 메서드들
         private void UpdateHungerSystem(float deltaTime)
         {
+            // 허기 수치 감소는 항상 처리
             _hungerComponent.ProcessHunger(deltaTime, GameConstants.Hunger.HUNGER_DECREASE_RATE);
             
-            // 굶주림 상태일 때 체력 감소 (누적 방식으로 처리)
-            // StateMachine의 Starving 상태에서도 이 로직이 실행됨
-            if (_hungerComponent.IsStarving)
+            // StateMachine이 Starving 상태일 때만 굶주림 데미지 적용
+            if (_stateMachine?.IsInState(PlayerState.Starving) == true && deltaTime > 0)
             {
-                if (deltaTime > 0)
-                {
-                    // 누적 방식으로 굶주림 데미지 처리
-                    _accumulatedStarvationDamage += GameConstants.Hunger.STARVATION_DAMAGE_RATE * deltaTime;
-                    
-                    // 누적된 데미지가 1 이상일 때 체력 감소 실행
-                    if (_accumulatedStarvationDamage >= 1.0f)
-                    {
-                        int damageToApply = (int)Math.Floor(_accumulatedStarvationDamage);
-                        _accumulatedStarvationDamage -= damageToApply;
-                        
-                        Health.TakeDamage(damageToApply);
-                        GD.Print($"Starvation damage applied: {damageToApply}, Health: {Health.CurrentHealth}/{Health.MaxHealth}");
-                    }
-                }
+                ApplyStarvationDamage(deltaTime);
             }
             else
             {
                 // 굶주림 상태가 아닐 때는 누적 데미지 초기화
                 _accumulatedStarvationDamage = 0f;
             }
+        }
+
+        private void ApplyStarvationDamage(float deltaTime)
+        {
+            // 누적 방식으로 굶주림 데미지 처리
+            _accumulatedStarvationDamage += GameConstants.Hunger.STARVATION_DAMAGE_RATE * deltaTime;
             
-            // 굶주림 상태 전환은 StateMachine의 CheckAutoStateTransitions에서 자동으로 처리됨
+            // 누적된 데미지가 1 이상일 때 체력 감소 실행
+            if (_accumulatedStarvationDamage >= 1.0f)
+            {
+                int damageToApply = (int)Math.Floor(_accumulatedStarvationDamage);
+                _accumulatedStarvationDamage -= damageToApply;
+                
+                Health.TakeDamage(damageToApply);
+                GodotLogger.SafePrint($"Starvation damage applied: {damageToApply}, Health: {Health.CurrentHealth}/{Health.MaxHealth}");
+            }
         }
 
         private void OnHungerChanged(int currentHunger)
@@ -372,7 +344,7 @@ namespace projectgodot
             var events = EventsHelper.GetEventsNode(this);
             events?.EmitSignal(Events.SignalName.StarvationStarted);
             
-            GD.Print("Player is starving! Health will decrease over time.");
+            GodotLogger.SafePrint("Player is starving! Health will decrease over time.");
         }
 
         public void EatFood(int foodValue = -1)
@@ -388,7 +360,7 @@ namespace projectgodot
             var events = EventsHelper.GetEventsNode(this);
             events?.EmitSignal(Events.SignalName.FoodConsumed);
             
-            GD.Print($"Player consumed food! Hunger restored by {foodValue}");
+            GodotLogger.SafePrint($"Player consumed food! Hunger restored by {foodValue}");
         }
 
     }
