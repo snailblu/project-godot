@@ -1,7 +1,8 @@
-[gd_scene load_steps=23 format=3 uid="uid://dkg2fw5wfvcji"]
+[gd_scene load_steps=24 format=3 uid="uid://dkg2fw5wfvcji"]
 
 [ext_resource type="Script" uid="uid://l317esb8rlmg" path="res://Scripts/Zombies/Zombie.cs" id="1_8n7s9"]
 [ext_resource type="Texture2D" uid="uid://2wh4mspcyti8" path="res://Textures/Characters/zombie_spritesheet.png" id="2_hhsi5"]
+[ext_resource type="Texture2D" uid="uid://b8lx6d7sel3yp" path="res://Textures/Shadows/LargeShadow.png" id="3_dmimt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hhsi5"]
 atlas = ExtResource("2_hhsi5")
@@ -169,3 +170,7 @@ animation = &"die"
 position = Vector2(-8, -16)
 scale = Vector2(1.5, 1.5)
 shape = SubResource("RectangleShape2D_5678")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="."]
+show_behind_parent = true
+texture = ExtResource("3_dmimt")

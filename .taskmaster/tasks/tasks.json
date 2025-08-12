@@ -10,7 +10,61 @@
         "priority": "high",
         "dependencies": [],
         "status": "pending",
-        "subtasks": []
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "기본 SchoolMap.tscn 씬 생성 및 구조 설정",
+            "description": "새로운 SchoolMap 씬을 생성하고 기본 노드 구조와 카메라 설정을 구성",
+            "dependencies": [],
+            "details": "Game.tscn을 참고하여 새로운 SchoolMap.tscn 생성. 루트 노드(Node2D), 카메라, 플레이어 노드 배치. 씬 기본 설정과 노드 구조 확립.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "32x32 타일셋을 사용한 학교 맵 레이아웃 구성",
+            "description": "TileMap을 사용하여 교실 6칸, 복도, 급식실, 창고, 운동장을 타일로 구성",
+            "dependencies": [
+              "1.1"
+            ],
+            "details": "32x32 픽셀 타일셋 리소스 추가. TileMap 노드 생성하여 학교 건물 레이아웃 구성. 벽, 바닥, 문 타일로 각 방 경계 설정. 충돌 레이어 설정으로 플레이어 이동 경로 제한.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "상호작용 가능한 오브젝트 Area2D 배치",
+            "description": "각 방에 책상, 사물함, 급식대, 창고 상자 등 상호작용 오브젝트를 Area2D로 배치",
+            "dependencies": [
+              "1.2"
+            ],
+            "details": "교실마다 책상과 사물함 Area2D 배치. 급식실에 급식대, 창고에 창고 상자 배치. 각 Area2D에 적절한 Sprite2D와 CollisionShape2D 설정. 상호작용 타입별 그룹 설정.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "E키 상호작용 힌트 UI 시스템 구현",
+            "description": "플레이어가 상호작용 오브젝트에 접근하면 E키 힌트를 표시하는 UI 시스템 구현",
+            "dependencies": [
+              "1.3"
+            ],
+            "details": "InteractionHint.cs 스크립트로 E키 아이콘 UI 구현. 플레이어 Area2D 감지 시 힌트 표시, 벗어나면 숨김. 오브젝트 위치 기준으로 UI 위치 조정. 깔끔한 힌트 디자인과 애니메이션 효과.",
+            "status": "pending",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "맵 통합 테스트 및 씬 전환 연결",
+            "description": "SchoolMap 씬의 모든 기능을 테스트하고 게임의 메인 씬과 연결",
+            "dependencies": [
+              "1.4"
+            ],
+            "details": "모든 상호작용 오브젝트 정상 작동 확인. 플레이어 이동과 충돌 테스트. E키 힌트 UI 표시/숨김 테스트. SceneManager를 통한 Game.tscn과의 씬 전환 구현. 최종 통합 테스트 수행.",
+            "status": "pending",
+            "testStrategy": ""
+          }
+        ]
       },
       {
         "id": 2,

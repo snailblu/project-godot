@@ -1,0 +1,93 @@
+{
+	"meta": {
+		"generatedAt": "2025-08-12T13:04:06.763Z",
+		"tasksAnalyzed": 10,
+		"totalTasks": 10,
+		"analysisCount": 10,
+		"thresholdScore": 5,
+		"projectName": "Taskmaster",
+		"usedResearch": false
+	},
+	"complexityAnalysis": [
+		{
+			"taskId": 1,
+			"taskTitle": "학교 맵 레벨 디자인 구현",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "기존 Game.tscn 구조를 참고하여 새로운 SchoolMap.tscn 생성. 타일맵 시스템, Area2D 상호작용 오브젝트, E키 힌트 UI 시스템을 단계별로 구현. 32x32 타일셋과 충돌 레이어 설정 포함.",
+			"reasoning": "새로운 씬 생성과 타일맵 시스템 구축이 필요하지만, 기존 씬 구조를 참고할 수 있어 중간 복잡도. 상호작용 시스템은 새로운 기능이지만 Area2D 패턴은 프로젝트에서 이미 사용 중."
+		},
+		{
+			"taskId": 2,
+			"taskTitle": "인벤토리 시스템 개발",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "기존 컴포넌트 패턴(HealthComponent, HungerComponent)을 참고하여 InventoryComponent 구현. HUD.tscn에 UI 통합, 드래그&드롭 시스템, JSON 기반 데이터 로딩을 각각 분리하여 구현.",
+			"reasoning": "완전히 새로운 시스템이지만 기존 컴포넌트 패턴을 활용 가능. UI 상호작용, 데이터 관리, 저장 시스템이 복합적으로 필요하여 높은 복잡도."
+		},
+		{
+			"taskId": 3,
+			"taskTitle": "아이템 및 루팅 시스템 구현",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "객체지향 Item 클래스 계층구조 설계, GameConstants 패턴을 활용한 아이템 데이터 관리, 확률 기반 루팅 테이블 시스템을 단계적으로 구현. 기존 상호작용 시스템과 인벤토리 연동.",
+			"reasoning": "Item 시스템, 확률 계산, 데이터 로딩, 인벤토리 연동 등 여러 시스템이 결합. 기존 GameConstants 구조를 확장하여 구현 가능하나 복합적 기능으로 높은 복잡도."
+		},
+		{
+			"taskId": 4,
+			"taskTitle": "제작(Crafting) 시스템 개발",
+			"complexityScore": 9,
+			"recommendedSubtasks": 7,
+			"expansionPrompt": "레시피 시스템, 제작 진행바 UI, 허기 소모 연동(기존 HungerComponent 확장), 방벽 프리팹 생성, 배치 모드 시스템을 각각 독립적으로 구현. 기존 상호작용 패턴과 UI 시스템 활용.",
+			"reasoning": "여러 시스템(인벤토리, 허기, UI, 오브젝트 배치)이 복합적으로 연동되는 고복잡도 기능. 새로운 게임플레이 메커니즘 도입이 필요하여 최고 복잡도."
+		},
+		{
+			"taskId": 5,
+			"taskTitle": "강화된 허기 시스템 구현",
+			"complexityScore": 6,
+			"recommendedSubtasks": 4,
+			"expansionPrompt": "기존 HungerComponent.cs 확장, GameConstants.Hunger에 새로운 상수 추가, 행동별 허기 소모 로직, 임계치 기반 플레이어 상태 효과 시스템을 단계별로 적용.",
+			"reasoning": "기존 HungerComponent가 잘 구현되어 있어 확장 작업 중심. 다양한 행동과 연동이 필요하지만 기존 시스템을 활용할 수 있어 중간 복잡도."
+		},
+		{
+			"taskId": 6,
+			"taskTitle": "시간 관리 시스템(낮/저녁/밤) 구현",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "기존 WaveManager 패턴을 참고한 TimeManager 구현, 게임 상태 전환 로직, UI 시간 표시, BGM 전환 시스템, 플레이어 행동 제약을 단계별로 구현. 기존 이벤트 시스템 활용.",
+			"reasoning": "게임의 핵심 루프를 관리하는 새로운 시스템. 기존 WaveManager와 Events 시스템을 참고할 수 있지만, 게임 전체 흐름에 영향을 미치는 복합적 기능."
+		},
+		{
+			"taskId": 7,
+			"taskTitle": "개선된 웨이브 시스템 적용",
+			"complexityScore": 5,
+			"recommendedSubtasks": 3,
+			"expansionPrompt": "기존 WaveManager.cs 수정, waves.json 데이터 구조 변경, 새로운 스폰 포인트 설정을 순차적으로 적용. 기존 좀비 스폰 로직과 GameConstants 활용.",
+			"reasoning": "기존 WaveManager가 잘 구현되어 있어 수정 작업 중심. 데이터 구조 변경과 스폰 포인트 추가가 주요 작업으로 중간 복잡도."
+		},
+		{
+			"taskId": 8,
+			"taskTitle": "확장된 좀비 AI 및 방벽 공격 시스템",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "기존 ZombieAIComponent 확장, 타겟 우선순위 시스템, 방벽 감지 및 공격 로직, 좀비 스탯 조정을 단계별로 구현. GameConstants.Zombie 확장과 방벽 상호작용 추가.",
+			"reasoning": "기존 ZombieAI가 구현되어 있어 확장 작업 중심. 새로운 타겟팅 시스템과 방벽 상호작용이 필요하지만 기존 구조를 활용 가능한 중상 복잡도."
+		},
+		{
+			"taskId": 9,
+			"taskTitle": "게임 상태 관리 및 세이브 시스템",
+			"complexityScore": 7,
+			"recommendedSubtasks": 5,
+			"expansionPrompt": "기존 GameData 싱글톤 패턴 확장, JSON 세이브/로드 시스템, 게임 상태 직렬화, 게임 오버 화면 확장, 데이터 무결성 검증을 단계별로 구현.",
+			"reasoning": "기존 GameData와 GameOverScreen이 있어 확장 가능. 데이터 직렬화와 암호화, 상태 관리가 복합적으로 필요한 중상 복잡도."
+		},
+		{
+			"taskId": 10,
+			"taskTitle": "UI/UX 최적화 및 피드백 시스템",
+			"complexityScore": 8,
+			"recommendedSubtasks": 6,
+			"expansionPrompt": "기존 HUD.tscn 확장, 허기 바 색상 시스템, 상호작용 힌트 UI, 파티클 효과 시스템, 사운드 피드백, 튜토리얼 시스템을 각각 독립적으로 구현. 기존 UI 구조와 SoundManager 활용.",
+			"reasoning": "여러 UI 요소와 피드백 시스템의 통합이 필요. 기존 HUD와 SoundManager를 활용할 수 있지만, 튜토리얼 시스템과 다양한 피드백 요소의 조합으로 높은 복잡도."
+		}
+	]
+}

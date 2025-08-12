@@ -36,7 +36,7 @@ namespace projectgodot
                 events.PlayerFiredWeapon += OnPlayerFiredWeapon;
                 events.ZombieTookDamage += OnZombieTookDamage;
                 events.PlayerTookDamage += OnPlayerTookDamage;
-                events.ProjectileHitWall += OnProjectileHitWall;
+                // events.ProjectileHitWall += OnProjectileHitWall;
             }
 
             GD.Print("SoundManager가 초기화되었습니다.");

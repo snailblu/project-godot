@@ -48,7 +48,7 @@ namespace projectgodot.Components
 
         public virtual void OnEnter(PlayerState previousState, object data = null)
         {
-            GodotLogger.SafePrint($"Player state: {previousState} -> {StateName}");
+            // GodotLogger.SafePrint($"Player state: {previousState} -> {StateName}");
         }
 
         public abstract void OnUpdate(double delta);

@@ -80,7 +80,7 @@ namespace projectgodot.Components
             var targetStateImpl = _states[targetState];
             if (!targetStateImpl.CanTransitionFrom(_currentStateName, data))
             {
-                GodotLogger.SafePrint($"State transition denied: {_currentStateName} -> {targetState} (Reason: {reason})");
+                // GodotLogger.SafePrint($"State transition denied: {_currentStateName} -> {targetState} (Reason: {reason})");
                 return false;
             }
             
@@ -105,7 +105,7 @@ namespace projectgodot.Components
             // 이벤트 발생
             StateChanged?.Invoke(previousState, targetState);
             
-            GodotLogger.SafePrint($"State transition: {previousState} -> {targetState} (Reason: {reason})");
+            // GodotLogger.SafePrint($"State transition: {previousState} -> {targetState} (Reason: {reason})");
             return true;
         }
         
