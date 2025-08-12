@@ -15,12 +15,6 @@ namespace projectgodot.Constants
             public const float DEFAULT_MOVEMENT_SPEED = 8000.0f;
         }
         
-        // 대시 설정  
-        public static class Dash
-        {
-            public const float DEFAULT_DASH_SPEED = 300f;
-            public const float DEFAULT_DASH_DURATION = 0.2f;
-        }
         
         // 무기 설정
         public static class Weapon
@@ -33,13 +27,6 @@ namespace projectgodot.Constants
         {
             public const float DEFAULT_SPEED = 600.0f;
             public const int DEFAULT_DAMAGE = 10;
-        }
-        
-        // 파워업 설정
-        public static class Powerup
-        {
-            public const float DEFAULT_DAMAGE_MULTIPLIER = 2.0f;
-            public const float DEFAULT_DURATION = 5.0f;
         }
         
         // 웨이브 설정
@@ -63,12 +50,10 @@ namespace projectgodot.Constants
             public const float LIGHT_INTENSITY = 2.0f;    // 총 발사 시
             public const float MEDIUM_INTENSITY = 5.0f;   // 좀비 사망 시
             public const float HEAVY_INTENSITY = 10.0f;   // 플레이어 데미지 시
-            public const float DASH_INTENSITY = 3.0f;     // 대시 시
             
             public const float LIGHT_DURATION = 0.1f;     // 짧은 쉐이크
             public const float MEDIUM_DURATION = 0.2f;    // 중간 쉐이크
             public const float HEAVY_DURATION = 0.4f;     // 긴 쉐이크
-            public const float DASH_DURATION = 0.15f;     // 대시 쉐이크
             
             public const float SHAKE_FREQUENCY = 30.0f;   // 쉐이크 진동 주파수
         }

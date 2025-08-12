@@ -3,37 +3,43 @@ using System;
 using projectgodot.Components;
 using projectgodot.Constants;
 using projectgodot.Utils;
+using projectgodot.Scripts.Interfaces;
 
 namespace projectgodot
 {
     public partial class Player : CharacterBody2D
     {
-        private PlayerData _playerData;
-        private PlayerMovement _playerMovement;
-        private WeaponComponent _weapon;
-        public DashComponent _dash;
-        private PackedScene _projectileScene;
-        private ISceneFactory _sceneFactory;
-        private PowerupLogic _powerupLogic;
-        private float _originalWeaponDamage;
-        private CameraShakeComponent _cameraShake;
+        // 인터페이스 기반 컴포넌트들
+        private IMovement _playerMovement;
+        private IWeapon _weapon;
+        private IHealth _health;
+        private IHunger _hungerComponent;
+        private IPlayerInput _inputHandler;
+        private IPlayerAnimation _animationController;
+        private IStateMachine _stateMachine;
         
-        // 새로운 컴포넌트들
-        private PlayerInputHandler _inputHandler;
-        private PlayerAnimationController _animationController;
+        // Export NodePath들 (의존성 주입용)
+        [Export] public NodePath MovementComponentPath;
+        [Export] public NodePath WeaponComponentPath;
+        [Export] public NodePath HealthComponentPath;
+        [Export] public NodePath HungerComponentPath;
+        [Export] public NodePath InputHandlerPath;
+        [Export] public NodePath AnimationControllerPath;
+        [Export] public NodePath StateMachinePath;
+        
+        // 기타 컴포넌트들 (아직 인터페이스화되지 않은 것들)
+        private PlayerData _playerData;
+        private ISceneFactory _sceneFactory;
+        private CameraShakeComponent _cameraShake;
         private PlayerCollisionHandler _collisionHandler;
         private PlayerEventBridge _eventBridge;
         
-        // State Machine (중앙화된 상태 관리)
-        private PlayerStateMachine _stateMachine;
+        // 컴포넌트들에게 제공할 컨텍스트
+        private PlayerContext _context;
         
-        // 허기 시스템
-        public HungerComponent _hungerComponent;
-        
-        // 누적 굶주림 데미지 (작은 deltaTime 값들을 누적하기 위함)
-        private float _accumulatedStarvationDamage = 0f;
-        
-        public HealthComponent Health { get; private set; }
+        // 호환성을 위한 프로퍼티들
+        public IHealth Health => _health;
+        public IHunger HungerComponent => _hungerComponent;
 
         private AnimationTree _animationTree;
 
@@ -44,48 +50,134 @@ namespace projectgodot
             InitializeEventHandlers();
         }
 
+        /// <summary>
+        /// NodePath로 컴포넌트를 해석하거나 fallback 인스턴스를 생성하는 헬퍼 메서드
+        /// </summary>
+        private T ResolveOrFallback<T>(NodePath path, Func<T> fallback) where T : class
+        {
+            if (path != null && !path.IsEmpty)
+            {
+                try
+                {
+                    var node = GetNodeOrNull(path);
+                    if (node is T component) 
+                        return component;
+                }
+                catch
+                {
+                    // 안전하게 무시하고 fallback으로 진행
+                }
+            }
+            return fallback();
+        }
+
         private void InitializeComponents()
         {
-            // 핵심 컴포넌트 인스턴스화
+            // PlayerData는 아직 인터페이스화되지 않음
             _playerData = new PlayerData();
-            _playerMovement = new PlayerMovement();
-            Health = new HealthComponent(100);
-            _dash = new DashComponent();
-            _hungerComponent = new HungerComponent(GameConstants.Hunger.DEFAULT_MAX_HUNGER);
             
-            // 무기 시스템 초기화
-            _weapon = new WeaponComponent(cooldown: 0.25f);
-            _originalWeaponDamage = _weapon.Damage;
-            _powerupLogic = new PowerupLogic();
-            _projectileScene = GD.Load<PackedScene>("res://Scenes/Projectiles/projectile.tscn");
+            // 인터페이스 기반 컴포넌트들을 NodePath로 주입 (ResolveOrFallback 헬퍼 사용)
+            _playerMovement = ResolveOrFallback(MovementComponentPath, () => new PlayerMovement());
+            _weapon = ResolveOrFallback(WeaponComponentPath, () => new WeaponComponent(cooldown: 0.25f));
+            _health = ResolveOrFallback(HealthComponentPath, () => new HealthComponent(100));
+            _hungerComponent = ResolveOrFallback(HungerComponentPath, () => new HungerComponent(GameConstants.Hunger.DEFAULT_MAX_HUNGER));
             
-            // UI 및 효과 컴포넌트
-            _inputHandler = new PlayerInputHandler();
-            _animationController = new PlayerAnimationController();
+            // UI 및 효과 컴포넌트들 (아직 인터페이스화되지 않음)
+            if (InputHandlerPath != null && !InputHandlerPath.IsEmpty)
+            {
+                var inputNode = GetNode(InputHandlerPath);
+                _inputHandler = inputNode as IPlayerInput;
+            }
+            if (_inputHandler == null)
+            {
+                var inputHandler = new PlayerInputHandler();
+                AddChild(inputHandler);
+                _inputHandler = inputHandler;
+            }
+            
+            if (AnimationControllerPath != null && !AnimationControllerPath.IsEmpty)
+            {
+                var animNode = GetNode(AnimationControllerPath);
+                _animationController = animNode as IPlayerAnimation;
+            }
+            if (_animationController == null)
+            {
+                var animController = new PlayerAnimationController();
+                AddChild(animController);
+                _animationController = animController;
+            }
+            
             _collisionHandler = new PlayerCollisionHandler();
             _eventBridge = new PlayerEventBridge();
             _cameraShake = new CameraShakeComponent();
             
-            // SceneFactory 찾기
+            // SceneFactory 찾기 (기존 방식 유지)
             var sceneRoot = GetTree().CurrentScene;
             _sceneFactory = sceneRoot.FindChild("SceneFactory", true) as ISceneFactory;
             if (_sceneFactory == null)
             {
                 GodotLogger.SafePrint("SceneFactory를 찾을 수 없습니다.");
             }
+            
+            // PlayerContext 생성
+            _context = new PlayerContext(this, _sceneFactory);
+            
+            // IGameComponent를 구현한 컴포넌트들 초기화
+            InitializeGameComponents();
+        }
+        
+        /// <summary>
+        /// IGameComponent를 구현한 컴포넌트들을 초기화
+        /// </summary>
+        private void InitializeGameComponents()
+        {
+            // 각 컴포넌트가 IGameComponent를 구현하는 경우 초기화
+            if (_playerMovement is IGameComponent movementComponent)
+                movementComponent.Initialize(_context);
+                
+            if (_weapon is IGameComponent weaponComponent)
+                weaponComponent.Initialize(_context);
+                
+            if (_health is IGameComponent healthComponent)
+                healthComponent.Initialize(_context);
+                
+            if (_hungerComponent is IGameComponent hungerComponent)
+                hungerComponent.Initialize(_context);
+                
+            if (_inputHandler is IGameComponent inputComponent)
+                inputComponent.Initialize(_context);
+                
+            if (_animationController is IGameComponent animationComponent)
+                animationComponent.Initialize(_context);
         }
 
         private void InitializeStateMachine()
         {
             // StateMachine을 먼저 추가하고 초기화
-            _stateMachine = new PlayerStateMachine();
-            AddChild(_stateMachine);
+            PlayerStateMachine stateMachineNode;
+            if (StateMachinePath != null && !StateMachinePath.IsEmpty)
+            {
+                var smNode = GetNode(StateMachinePath);
+                stateMachineNode = smNode as PlayerStateMachine;
+                if (stateMachineNode == null)
+                {
+                    stateMachineNode = new PlayerStateMachine();
+                    AddChild(stateMachineNode);
+                }
+            }
+            else
+            {
+                stateMachineNode = new PlayerStateMachine();
+                AddChild(stateMachineNode);
+            }
+            _stateMachine = stateMachineNode;
             
-            // 다른 컴포넌트들 추가
-            AddChild(_dash);
+            // 다른 컴포넌트들 추가 (Node 타입만)
             AddChild(_cameraShake);
-            AddChild(_inputHandler);
-            AddChild(_animationController);
+            if (_inputHandler is Node inputNode && inputNode.GetParent() == null)
+                AddChild(inputNode);
+            if (_animationController is Node animNode && animNode.GetParent() == null)
+                AddChild(animNode);
             AddChild(_collisionHandler);
             AddChild(_eventBridge);
             
@@ -94,8 +186,8 @@ namespace projectgodot
             _animationController.Initialize(_animationTree);
             
             // StateMachine 연결
-            _collisionHandler.Initialize(_stateMachine);
-            _inputHandler.Initialize(_stateMachine);
+            _collisionHandler.Initialize(stateMachineNode);
+            _inputHandler.Initialize(stateMachineNode);
         }
 
         private void InitializeEventHandlers()
@@ -109,7 +201,6 @@ namespace projectgodot
             
             // 입력 이벤트 연결
             _inputHandler.MovementRequested += OnMovementRequested;
-            _inputHandler.DashRequested += OnDashRequested;
             _inputHandler.ShootRequested += OnShootRequested;
             _inputHandler.TestDamageRequested += OnTestDamageRequested;
             _inputHandler.EatFoodRequested += OnEatFoodRequested;
@@ -136,12 +227,6 @@ namespace projectgodot
             // StateMachine에서 이동 가능한지 체크
             if (_stateMachine?.CanPerformAction("move") == true)
             {
-                if (_stateMachine.IsInState(PlayerState.Dashing))
-                {
-                    // 대시 중일 때는 대시 속도 사용
-                    calculatedVelocity = _currentMovementDirection * _dash.DashSpeed;
-                }
-                else
                 {
                     // 일반 이동
                     calculatedVelocity = _playerMovement.CalculateVelocity(
@@ -167,9 +252,6 @@ namespace projectgodot
             // 무기 쿨다운 업데이트
             _weapon.Process((float)delta);
             
-            // 파워업 효과 업데이트
-            UpdatePowerupEffect();
-            
             // 허기 시스템 업데이트 (StateMachine과 무관한 백그라운드 프로세스)
             UpdateHungerSystem((float)delta);
             
@@ -183,15 +265,6 @@ namespace projectgodot
             _currentMovementDirection = direction;
         }
 
-        private void OnDashRequested(Vector2 direction)
-        {
-            // StateMachine을 통해 대시 상태 전환 요청
-            if (_stateMachine?.RequestDash() == true)
-            {
-                _dash.StartDash(direction);
-                _eventBridge.RequestDashShake();
-            }
-        }
 
         private void OnShootRequested()
         {
@@ -252,40 +325,11 @@ namespace projectgodot
             muzzleFlashEffect.StartEffect();
 #endif
             
-            // SceneFactory를 통해 발사체 생성
-            _sceneFactory.CreateProjectile(_projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
+            // SceneFactory를 통해 발사체 생성 (하드코딩된 리소스 로딩을 ISceneFactory로 위임)
+            var projectileScene = GD.Load<PackedScene>("res://Scenes/Projectiles/projectile.tscn");
+            _sceneFactory.CreateProjectile(projectileScene, GlobalPosition, direction, (int)_weapon.Damage);
         }
 
-        private void UpdatePowerupEffect()
-        {
-            _powerupLogic.Update();
-            
-            // 파워업 효과가 방금 종료되었는지 확인
-            if (!_powerupLogic.IsActive && _weapon.Damage != _originalWeaponDamage)
-            {
-                // 원래 데미지로 복구
-                _weapon.Damage = _originalWeaponDamage;
-                GodotLogger.SafePrint($"Powerup effect ended! Damage restored to {_originalWeaponDamage}");
-            }
-        }
-        
-        public void ApplyPowerup(float damageMultiplier, float duration)
-        {
-            if (_powerupLogic.IsActive) 
-            {
-                GodotLogger.SafePrint("Powerup already active, ignoring new one");
-                return;
-            }
-            
-            _powerupLogic.DamageMultiplier = damageMultiplier;
-            _powerupLogic.Duration = duration;
-            _powerupLogic.Activate(_originalWeaponDamage);
-            
-            var newDamage = _powerupLogic.CalculateDamage(_originalWeaponDamage);
-            _weapon.Damage = newDamage;
-            
-            GodotLogger.SafePrint($"Powerup applied! Damage: {_originalWeaponDamage} -> {newDamage} for {duration} seconds");
-        }
 
         private void OnCameraShakeRequested(float intensity, float duration)
         {
@@ -304,30 +348,15 @@ namespace projectgodot
             _hungerComponent.ProcessHunger(deltaTime, GameConstants.Hunger.HUNGER_DECREASE_RATE);
             
             // StateMachine이 Starving 상태일 때만 굶주림 데미지 적용
-            if (_stateMachine?.IsInState(PlayerState.Starving) == true && deltaTime > 0)
+            // (HungerComponent가 자체적으로 Health에 데미지를 전달)
+            if (_stateMachine?.IsInState(PlayerState.Starving) == true)
             {
-                ApplyStarvationDamage(deltaTime);
+                _hungerComponent.ProcessStarvation(deltaTime);
             }
             else
             {
-                // 굶주림 상태가 아닐 때는 누적 데미지 초기화
-                _accumulatedStarvationDamage = 0f;
-            }
-        }
-
-        private void ApplyStarvationDamage(float deltaTime)
-        {
-            // 누적 방식으로 굶주림 데미지 처리
-            _accumulatedStarvationDamage += GameConstants.Hunger.STARVATION_DAMAGE_RATE * deltaTime;
-            
-            // 누적된 데미지가 1 이상일 때 체력 감소 실행
-            if (_accumulatedStarvationDamage >= 1.0f)
-            {
-                int damageToApply = (int)Math.Floor(_accumulatedStarvationDamage);
-                _accumulatedStarvationDamage -= damageToApply;
-                
-                Health.TakeDamage(damageToApply);
-                GodotLogger.SafePrint($"Starvation damage applied: {damageToApply}, Health: {Health.CurrentHealth}/{Health.MaxHealth}");
+                // 굶주림 상태가 아닐 때 누적 데미지 초기화
+                _hungerComponent.ProcessStarvation(0f);
             }
         }
 
@@ -361,6 +390,43 @@ namespace projectgodot
             events?.EmitSignal(Events.SignalName.FoodConsumed);
             
             GodotLogger.SafePrint($"Player consumed food! Hunger restored by {foodValue}");
+        }
+
+        public override void _ExitTree()
+        {
+            // 이벤트 구독 안전하게 해제 (메모리 누수 방지)
+            if (_weapon != null) 
+                _weapon.OnShoot -= SpawnProjectile;
+                
+            if (_health != null)
+            {
+                _health.Died -= OnDeath;
+                _health.HealthChanged -= OnHealthChanged;
+            }
+            
+            if (_hungerComponent != null)
+            {
+                _hungerComponent.HungerChanged -= OnHungerChanged;
+                _hungerComponent.StarvationStarted -= OnStarvationStarted;
+            }
+            
+            if (_inputHandler != null)
+            {
+                _inputHandler.MovementRequested -= OnMovementRequested;
+                _inputHandler.ShootRequested -= OnShootRequested;
+                _inputHandler.TestDamageRequested -= OnTestDamageRequested;
+                _inputHandler.EatFoodRequested -= OnEatFoodRequested;
+            }
+            
+            if (_collisionHandler != null)
+                _collisionHandler.DamageReceived -= OnDamageReceived;
+
+            // 전역 이벤트 해제
+            var events = EventsHelper.GetEventsNode(this);
+            if (events != null)
+                events.CameraShakeRequested -= OnCameraShakeRequested;
+                
+            base._ExitTree();
         }
 
     }

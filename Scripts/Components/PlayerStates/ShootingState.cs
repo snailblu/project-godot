@@ -34,10 +34,9 @@ namespace projectgodot.Components.PlayerStates
 
         public override bool CanTransitionFrom(PlayerState fromState, object data = null)
         {
-            // Dead, TakingDamage, Dashing 상태가 아니면 발사 가능
+            // Dead, TakingDamage 상태가 아니면 발사 가능
             return fromState != PlayerState.Dead && 
-                   fromState != PlayerState.TakingDamage && 
-                   fromState != PlayerState.Dashing;
+                   fromState != PlayerState.TakingDamage;
         }
     }
 }

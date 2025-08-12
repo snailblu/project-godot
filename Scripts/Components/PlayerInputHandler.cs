@@ -2,14 +2,14 @@ using Godot;
 using System;
 using projectgodot.Components;
 using projectgodot.Constants;
+using projectgodot.Scripts.Interfaces;
 
 namespace projectgodot.Components
 {
-    public partial class PlayerInputHandler : Node
+    public partial class PlayerInputHandler : Node, IPlayerInput
     {
         // 입력 이벤트들
         public event Action<Vector2> MovementRequested;
-        public event Action<Vector2> DashRequested;
         public event Action ShootRequested;
         public event Action TestDamageRequested;
         public event Action EatFoodRequested;
@@ -27,14 +27,6 @@ namespace projectgodot.Components
             Vector2 direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");
             MovementRequested?.Invoke(direction);
             
-            // 2. 대시 입력 처리 (Shift 키) - StateMachine을 통해 대시 가능 여부 확인
-            if (Input.IsActionJustPressed("dash") && _stateMachine?.CanPerformAction("dash") == true)
-            {
-                if (direction != Vector2.Zero)
-                {
-                    DashRequested?.Invoke(direction);
-                }
-            }
 
             // 3. 임시 데미지 테스트 (T키)
             if (Input.IsActionJustPressed("ui_accept"))

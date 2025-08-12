@@ -1,9 +1,11 @@
 using System;
 using projectgodot.Utils;
+using projectgodot.Scripts.Interfaces;
+using projectgodot.Constants;
 
 namespace projectgodot
 {
-    public class HungerComponent
+    public class HungerComponent : IHunger
     {
         public int MaxHunger { get; private set; }
         public int CurrentHunger { get; private set; }
@@ -11,9 +13,13 @@ namespace projectgodot
 
         public event Action<int> HungerChanged;
         public event Action StarvationStarted;
+        public event Action<int> StarvationDamageApplied;
         
         // 누적 허기 감소량 (작은 deltaTime 값들을 누적하기 위함)
         private float _accumulatedHungerDecrease = 0f;
+        
+        // 누적 굶주림 데미지 (작은 deltaTime 값들을 누적하기 위함)
+        private float _accumulatedStarvationDamage = 0f;
 
         public HungerComponent(int maxHunger)
         {
@@ -64,6 +70,29 @@ namespace projectgodot
                 _accumulatedHungerDecrease -= hungerToDecrease;
                 
                 DecreaseHunger(hungerToDecrease);
+            }
+        }
+        
+        public void ProcessStarvation(float deltaTime)
+        {
+            if (deltaTime <= 0 || !IsStarving) 
+            {
+                // 굶주림 상태가 아닐 때는 누적 데미지 초기화
+                _accumulatedStarvationDamage = 0f;
+                return;
+            }
+            
+            // 누적 방식으로 굶주림 데미지 처리
+            _accumulatedStarvationDamage += GameConstants.Hunger.STARVATION_DAMAGE_RATE * deltaTime;
+            
+            // 누적된 데미지가 1 이상일 때 체력 감소 실행
+            if (_accumulatedStarvationDamage >= 1.0f)
+            {
+                int damageToApply = (int)Math.Floor(_accumulatedStarvationDamage);
+                _accumulatedStarvationDamage -= damageToApply;
+                
+                StarvationDamageApplied?.Invoke(damageToApply);
+                GodotLogger.SafePrint($"Starvation damage applied: {damageToApply}");
             }
         }
     }

@@ -19,12 +19,6 @@ namespace projectgodot.Tests
             Assert.That(GameConstants.Player.DEFAULT_MOVEMENT_SPEED, Is.EqualTo(8000.0f));
         }
         
-        [Test]
-        public void DashConstants_ShouldHaveExpectedValues()
-        {
-            Assert.That(GameConstants.Dash.DEFAULT_DASH_SPEED, Is.EqualTo(300f));
-            Assert.That(GameConstants.Dash.DEFAULT_DASH_DURATION, Is.EqualTo(0.2f));
-        }
         
         [Test]
         public void WeaponConstants_ShouldHaveExpectedValues()
@@ -37,13 +31,6 @@ namespace projectgodot.Tests
         {
             Assert.That(GameConstants.Projectile.DEFAULT_SPEED, Is.EqualTo(600.0f));
             Assert.That(GameConstants.Projectile.DEFAULT_DAMAGE, Is.EqualTo(10));
-        }
-        
-        [Test]
-        public void PowerupConstants_ShouldHaveExpectedValues()
-        {
-            Assert.That(GameConstants.Powerup.DEFAULT_DAMAGE_MULTIPLIER, Is.EqualTo(2.0f));
-            Assert.That(GameConstants.Powerup.DEFAULT_DURATION, Is.EqualTo(5.0f));
         }
         
         [Test]

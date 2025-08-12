@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://dv26fnchds2og"]
+[gd_scene load_steps=9 format=4 uid="uid://dv26fnchds2og"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Scenes/Zombies/Zombie.tscn" id="2_zombie"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://dkg2fw5wfvcji" path="res://Scenes/Zombies/TankZombie.tscn" id="4_trn2v"]
 [ext_resource type="PackedScene" uid="uid://cr846fm1ixgpc" path="res://Scenes/UI/HUD.tscn" id="5_hud"]
 [ext_resource type="TileSet" uid="uid://ddpha2pe66qx" path="res://Textures/Tilesets/Game.tres" id="6_dyb2d"]
-[ext_resource type="PackedScene" uid="uid://bw2j3k4l5m6n7" path="res://Scenes/Items/powerup.tscn" id="6_powerup"]
 
 [node name="Main2" type="Node"]
 
@@ -31,12 +30,6 @@ tile_set = ExtResource("6_dyb2d")
 position = Vector2(319, 178)
 
 [node name="HUD" parent="." instance=ExtResource("5_hud")]
-
-[node name="Powerup1" parent="." instance=ExtResource("6_powerup")]
-position = Vector2(503, 178)
-
-[node name="Powerup2" parent="." instance=ExtResource("6_powerup")]
-position = Vector2(174, 278)
 
 [node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("_spawnLocationsContainer")]
 script = ExtResource("3_gamemanager")

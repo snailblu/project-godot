@@ -15,19 +15,18 @@ namespace projectgodot.Tests
         {
             Assert.That((int)PlayerState.Idle, Is.EqualTo(0));
             Assert.That((int)PlayerState.Moving, Is.EqualTo(1));
-            Assert.That((int)PlayerState.Dashing, Is.EqualTo(2));
-            Assert.That((int)PlayerState.Shooting, Is.EqualTo(3));
-            Assert.That((int)PlayerState.TakingDamage, Is.EqualTo(4));
-            Assert.That((int)PlayerState.Starving, Is.EqualTo(5));
-            Assert.That((int)PlayerState.Dead, Is.EqualTo(6));
+            Assert.That((int)PlayerState.Shooting, Is.EqualTo(2));
+            Assert.That((int)PlayerState.TakingDamage, Is.EqualTo(3));
+            Assert.That((int)PlayerState.Starving, Is.EqualTo(4));
+            Assert.That((int)PlayerState.Dead, Is.EqualTo(5));
         }
 
         [Test]
         public void StateTransitionRequest_Constructor_ShouldSetProperties()
         {
-            var request = new StateTransitionRequest(PlayerState.Dashing, "Test reason", "test data");
+            var request = new StateTransitionRequest(PlayerState.Shooting, "Test reason", "test data");
 
-            Assert.That(request.TargetState, Is.EqualTo(PlayerState.Dashing));
+            Assert.That(request.TargetState, Is.EqualTo(PlayerState.Shooting));
             Assert.That(request.Reason, Is.EqualTo("Test reason"));
             Assert.That(request.Data, Is.EqualTo("test data"));
         }

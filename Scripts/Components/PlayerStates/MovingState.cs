@@ -18,9 +18,8 @@ namespace projectgodot.Components.PlayerStates
 
         public override bool CanTransitionFrom(PlayerState fromState, object data = null)
         {
-            // Dashing, TakingDamage, Dead를 제외하고는 Moving으로 전환 가능
+            // TakingDamage, Dead를 제외하고는 Moving으로 전환 가능
             return fromState != PlayerState.Dead && 
-                   fromState != PlayerState.Dashing && 
                    fromState != PlayerState.TakingDamage;
         }
     }

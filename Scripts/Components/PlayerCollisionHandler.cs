@@ -22,12 +22,6 @@ namespace projectgodot.Components
             // 부딪힌 대상이 Zombie 클래스인지 확인
             if (body is Zombie)
             {
-                // StateMachine을 통해 대시 상태 확인 (무적 상태)
-                if (_stateMachine?.IsInState(PlayerState.Dashing) == true)
-                {
-                    GD.Print("Player is dashing - immune to damage!");
-                    return;
-                }
                 
                 // 체력 10 감소 이벤트 발생
                 DamageReceived?.Invoke(ZOMBIE_DAMAGE);

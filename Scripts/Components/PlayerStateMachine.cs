@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Godot;
 using projectgodot.Components.PlayerStates;
 using projectgodot.Utils;
+using projectgodot.Scripts.Interfaces;
 
 namespace projectgodot.Components
 {
@@ -10,7 +11,7 @@ namespace projectgodot.Components
     /// 플레이어의 상태를 관리하는 State Machine 컴포넌트
     /// 컴포지션 패턴을 유지하면서 상태 기반 로직을 중앙화
     /// </summary>
-    public partial class PlayerStateMachine : Node
+    public partial class PlayerStateMachine : Node, IStateMachine
     {
         private Dictionary<PlayerState, IPlayerState> _states;
         private IPlayerState _currentState;
@@ -50,7 +51,6 @@ namespace projectgodot.Components
             {
                 { PlayerState.Idle, new IdleState(this) },
                 { PlayerState.Moving, new MovingState(this) },
-                { PlayerState.Dashing, new DashingState(this) },
                 { PlayerState.Shooting, new ShootingState(this) },
                 { PlayerState.TakingDamage, new TakingDamageState(this) },
                 { PlayerState.Starving, new StarvingState(this) },
@@ -126,23 +126,15 @@ namespace projectgodot.Components
             // Dead 상태면 더 이상 체크하지 않음
             if (_currentStateName == PlayerState.Dead) return;
             
-            // 높은 우선순위: Starving (단, TakingDamage나 Dashing이 아닐 때)
-            if (Player._hungerComponent.IsStarving && 
+            // 높은 우선순위: Starving (단, TakingDamage가 아닐 때)
+            if (Player.HungerComponent.IsStarving && 
                 _currentStateName != PlayerState.Starving &&
-                _currentStateName != PlayerState.TakingDamage &&
-                _currentStateName != PlayerState.Dashing)
+                _currentStateName != PlayerState.TakingDamage)
             {
                 RequestStateTransition(PlayerState.Starving, "Player is starving");
                 return;
             }
             
-            // Dashing 상태 종료 체크
-            if (_currentStateName == PlayerState.Dashing && !Player._dash.IsDashing)
-            {
-                var targetState = HasMovementInput ? PlayerState.Moving : PlayerState.Idle;
-                RequestStateTransition(targetState, "Dashing completed");
-                return;
-            }
             
             // Moving/Idle 상태 간 전환 (낮은 우선순위)
             if (_currentStateName == PlayerState.Idle && HasMovementInput)
@@ -163,13 +155,6 @@ namespace projectgodot.Components
             HasMovementInput = hasMovement;
         }
         
-        /// <summary>
-        /// 대시 요청 처리
-        /// </summary>
-        public bool RequestDash()
-        {
-            return RequestStateTransition(PlayerState.Dashing, "Dash requested");
-        }
         
         /// <summary>
         /// 발사 요청 처리
@@ -206,15 +191,10 @@ namespace projectgodot.Components
                     return _currentStateName != PlayerState.Dead && 
                            _currentStateName != PlayerState.TakingDamage;
                            
-                case "dash":
-                    return _currentStateName != PlayerState.Dead && 
-                           _currentStateName != PlayerState.TakingDamage &&
-                           _currentStateName != PlayerState.Dashing;
                            
                 case "shoot":
                     return _currentStateName != PlayerState.Dead && 
-                           _currentStateName != PlayerState.TakingDamage &&
-                           _currentStateName != PlayerState.Dashing;
+                           _currentStateName != PlayerState.TakingDamage;
                            
                 case "takedamage":
                     return _currentStateName != PlayerState.Dead;

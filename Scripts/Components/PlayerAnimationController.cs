@@ -1,8 +1,9 @@
 using Godot;
+using projectgodot.Scripts.Interfaces;
 
 namespace projectgodot.Components
 {
-    public partial class PlayerAnimationController : Node
+    public partial class PlayerAnimationController : Node, IPlayerAnimation
     {
         private AnimationTree _animationTree;
 

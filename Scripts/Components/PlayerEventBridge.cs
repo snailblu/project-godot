@@ -14,12 +14,6 @@ namespace projectgodot.Components
         }
 
         // 카메라 쉐이크 이벤트들
-        public void RequestDashShake()
-        {
-            _events?.EmitSignal(Events.SignalName.CameraShakeRequested, 
-                GameConstants.CameraShake.DASH_INTENSITY, 
-                GameConstants.CameraShake.DASH_DURATION);
-        }
 
         public void RequestHeavyShake()
         {

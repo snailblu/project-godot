@@ -1,9 +1,10 @@
 using System;
 using projectgodot.Constants;
+using projectgodot.Scripts.Interfaces;
 
 namespace projectgodot
 {
-    public class WeaponComponent
+    public class WeaponComponent : IWeapon
     {
         private readonly float _cooldown;
         private float _cooldownTimer;

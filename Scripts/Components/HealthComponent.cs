@@ -2,10 +2,12 @@ using System;
 using Godot;
 using projectgodot.Helpers;
 using projectgodot.Utils;
+using projectgodot.Scripts.Interfaces;
+using projectgodot.Components;
 
 namespace projectgodot
 {
-    public class HealthComponent
+    public class HealthComponent : IHealth, IGameComponent
     {
         public int MaxHealth { get; private set; }
         public int CurrentHealth { get; private set; }
@@ -13,11 +15,28 @@ namespace projectgodot
 
         public event Action Died;
         public event Action<int> HealthChanged;
+        
+        private IHunger _hungerComponent;
 
         public HealthComponent(int maxHealth)
         {
             MaxHealth = maxHealth;
             CurrentHealth = maxHealth;
+        }
+
+        public void Initialize(PlayerContext context)
+        {
+            _hungerComponent = context.Player.HungerComponent;
+            if (_hungerComponent != null)
+            {
+                _hungerComponent.StarvationDamageApplied += OnStarvationDamageReceived;
+            }
+        }
+        
+        private void OnStarvationDamageReceived(int damage)
+        {
+            TakeDamage(damage);
+            GodotLogger.SafePrint($"Health received starvation damage: {damage}");
         }
 
         public void TakeDamage(int amount)
