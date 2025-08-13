@@ -1,15 +1,9 @@
-[gd_scene load_steps=42 format=3 uid="uid://hlg1a20kb0h0"]
+[gd_scene load_steps=44 format=3 uid="uid://hlg1a20kb0h0"]
 
+[ext_resource type="Script" uid="uid://c5d4w3kly52sx" path="res://Scenes/Player/PlayerController.cs" id="1_h54ih"]
 [ext_resource type="Texture2D" uid="uid://c0qnso8yqex2r" path="res://Textures/Characters/Player.png" id="3_h54ih"]
 [ext_resource type="Texture2D" uid="uid://c7sstyl0ebv83" path="res://Textures/Shadows/MediumShadow.png" id="3_ude3g"]
-
-[sub_resource type="CSharpScript" id="CSharpScript_ft8w5"]
-script/source = "using Godot;
-
-public partial class Player : CharacterBody2D
-{
-}
-"
+[ext_resource type="Script" uid="uid://bf45l65rxxdig" path="res://Scripts/Components/HealthComponent.cs" id="4_ude3g"]
 
 [sub_resource type="Animation" id="Animation_ude3g"]
 length = 0.001
@@ -322,23 +316,23 @@ blend_mode = 1
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ji083"]
 advance_mode = 2
-advance_condition = &"run"
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0kmp4"]
-advance_mode = 2
-advance_condition = &"idle"
+advance_condition = &"Run"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ude3g"]
 advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0kmp4"]
+advance_mode = 2
+advance_condition = &"Idle"
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_i5acl"]
 states/End/position = Vector2(709, 99.5)
 states/IdleState/node = SubResource("AnimationNodeBlendSpace2D_t26db")
 states/IdleState/position = Vector2(477, 50.5)
 states/RunState/node = SubResource("AnimationNodeBlendSpace2D_fk5o5")
-states/RunState/position = Vector2(476.625, 190.5)
+states/RunState/position = Vector2(476.812, 190)
 states/Start/position = Vector2(215, 50.75)
-transitions = ["IdleState", "RunState", SubResource("AnimationNodeStateMachineTransition_ji083"), "RunState", "IdleState", SubResource("AnimationNodeStateMachineTransition_0kmp4"), "Start", "RunState", SubResource("AnimationNodeStateMachineTransition_ude3g")]
+transitions = ["IdleState", "RunState", SubResource("AnimationNodeStateMachineTransition_ji083"), "Start", "RunState", SubResource("AnimationNodeStateMachineTransition_ude3g"), "RunState", "IdleState", SubResource("AnimationNodeStateMachineTransition_0kmp4")]
 graph_offset = Vector2(149.183, 4.80251)
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_h54ih"]
@@ -364,10 +358,14 @@ nodes/StateMachine/position = Vector2(120, 90)
 nodes/output/position = Vector2(450, 120)
 node_connections = [&"output", 0, &"StateMachine"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_h54ih"]
+radius = 22.0227
+
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 4
 motion_mode = 1
-script = SubResource("CSharpScript_ft8w5")
+script = ExtResource("1_h54ih")
+Speed = 100.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -13)
@@ -385,10 +383,29 @@ tree_root = SubResource("AnimationNodeBlendTree_0u84n")
 advance_expression_base_node = NodePath("..")
 anim_player = NodePath("../AnimationPlayer")
 parameters/StateMachine/AttackState/blend_position = Vector2(-0.0702426, -0.447099)
-parameters/StateMachine/MoveState/conditions/idle = true
-parameters/StateMachine/MoveState/conditions/run = false
-parameters/StateMachine/MoveState/IdleState/blend_position = 0.0125709
-parameters/StateMachine/MoveState/RunState/blend_position = 0.00833333
+parameters/StateMachine/MoveState/conditions/Idle = false
+parameters/StateMachine/MoveState/conditions/Run = false
+parameters/StateMachine/MoveState/IdleState/blend_position = Vector2(0.00333333, -0.614512)
+parameters/StateMachine/MoveState/RunState/blend_position = Vector2(-0.035, 0.269841)
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(0, -1)
+texture = ExtResource("3_ude3g")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, 0, -5, -7, 0, -13, 5, -7)
+
+[node name="InteractionArea" type="Area2D" parent="."]
+position = Vector2(0, -1)
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
+position = Vector2(0, -10)
+shape = SubResource("CircleShape2D_h54ih")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("4_ude3g")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 process_callback = 0
@@ -397,11 +414,3 @@ limit_top = -700
 limit_right = 1000
 limit_bottom = 700
 position_smoothing_enabled = true
-
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(0, 0, -5, -7, 0, -13, 5, -7)
-
-[node name="ShadowSprite2D" type="Sprite2D" parent="."]
-show_behind_parent = true
-position = Vector2(0, -1)
-texture = ExtResource("3_ude3g")

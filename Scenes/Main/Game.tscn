@@ -1,11 +1,21 @@
-[gd_scene load_steps=7 format=4 uid="uid://dv26fnchds2og"]
+[gd_scene load_steps=12 format=4 uid="uid://dv26fnchds2og"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
+[ext_resource type="Script" uid="uid://b2fn1tp27s7i6" path="res://Scenes/Main/LightingController.cs" id="1_dyb2d"]
 [ext_resource type="Texture2D" uid="uid://pdui5kt08q7v" path="res://Textures/World/GrassBackground.png" id="1_h7g0e"]
 [ext_resource type="TileSet" uid="uid://byu08iba6c1ak" path="res://Textures/World/DirtTileset.tres" id="2_2p31s"]
+[ext_resource type="Environment" uid="uid://54oak14s3sl1" path="res://Resources/Environments/day_environment.tres" id="2_27pm6"]
 [ext_resource type="TileSet" uid="uid://c7yy01twftbxm" path="res://Textures/World/CliffTileset.tres" id="3_dpnlb"]
-[ext_resource type="PackedScene" uid="uid://db5eshtc3blm" path="res://Scenes/World/bush.tscn" id="9_dyb2d"]
-[ext_resource type="PackedScene" uid="uid://b2rhurdmclxa8" path="res://Scenes/World/tree.tscn" id="10_27pm6"]
+[ext_resource type="Environment" uid="uid://df782jrrfeap3" path="res://Resources/Environments/night_environment.tres" id="3_u2n30"]
+[ext_resource type="PackedScene" uid="uid://bciujj7rehxpm" path="res://Scenes/World/ResourceNode.tscn" id="8_h7g0e"]
+[ext_resource type="Texture2D" uid="uid://cl25yttaxggye" path="res://Textures/UI/HeartUIFull.png" id="9_27pm6"]
+[ext_resource type="Script" uid="uid://bx5mlgt2og2sr" path="res://Scripts/Resources/ResourceData.cs" id="10_u2n30"]
+
+[sub_resource type="Resource" id="Resource_2p31s"]
+script = ExtResource("10_u2n30")
+Icon = ExtResource("9_27pm6")
+AmountPerHit = 1
+metadata/_custom_type_script = "uid://bx5mlgt2og2sr"
 
 [node name="World" type="Node2D"]
 y_sort_enabled = true
@@ -34,41 +44,32 @@ y_sort_origin = 16
 [node name="Player" parent="." instance=ExtResource("1_3ymgr")]
 position = Vector2(160, 90)
 
-[node name="Bush" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(128, 140)
+[node name="LightingController" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_27pm6")
+script = ExtResource("1_dyb2d")
+_dayEnvironment = ExtResource("2_27pm6")
+_nightEnvironment = ExtResource("3_u2n30")
 
-[node name="Bush2" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(150, 215)
+[node name="Bush" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(180, 211)
+_resourceData = SubResource("Resource_2p31s")
 
-[node name="Bush3" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(248, 114)
+[node name="Bush2" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(147, 307)
+_resourceData = SubResource("Resource_2p31s")
 
-[node name="Bush4" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(290, 166)
+[node name="Bush3" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(167, 321)
+_resourceData = SubResource("Resource_2p31s")
 
-[node name="Bush5" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(105, 73)
+[node name="Bush4" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(184, 302)
+_resourceData = SubResource("Resource_2p31s")
 
-[node name="Bush6" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(264, 124)
+[node name="Bush5" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(273, 126)
+_resourceData = SubResource("Resource_2p31s")
 
-[node name="Bush7" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(280, 130)
-
-[node name="Bush8" parent="." instance=ExtResource("9_dyb2d")]
-position = Vector2(371, 255)
-
-[node name="Tree" parent="." instance=ExtResource("10_27pm6")]
-position = Vector2(200, 166)
-
-[node name="Tree2" parent="." instance=ExtResource("10_27pm6")]
-position = Vector2(82, 219)
-
-[node name="Tree3" parent="." instance=ExtResource("10_27pm6")]
-position = Vector2(160, 341)
-
-[node name="Tree5" parent="." instance=ExtResource("10_27pm6")]
-position = Vector2(470, 276)
-
-[node name="Tree4" parent="." instance=ExtResource("10_27pm6")]
-position = Vector2(496, 138)
+[node name="Bush6" parent="." instance=ExtResource("8_h7g0e")]
+position = Vector2(110, 118)
+_resourceData = SubResource("Resource_2p31s")

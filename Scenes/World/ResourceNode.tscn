@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://bciujj7rehxpm"]
+
+[ext_resource type="Script" uid="uid://dltp0ukxpvddf" path="res://Scenes/World/ResourceNode.cs" id="1_gu8q0"]
+[ext_resource type="Script" uid="uid://bf45l65rxxdig" path="res://Scripts/Components/HealthComponent.cs" id="1_l6iww"]
+[ext_resource type="Texture2D" uid="uid://ddkhqsa1ngx3r" path="res://Textures/World/Bush.png" id="2_wfabt"]
+[ext_resource type="Texture2D" uid="uid://b8lx6d7sel3yp" path="res://Textures/Shadows/LargeShadow.png" id="3_wfabt"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2vit7"]
+
+[node name="ResourceNode" type="StaticBody2D"]
+collision_layer = 4
+script = ExtResource("1_gu8q0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -12)
+texture = ExtResource("2_wfabt")
+
+[node name="ShadowSprite2D" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(0, -1)
+texture = ExtResource("3_wfabt")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("CircleShape2D_2vit7")
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("1_l6iww")
+_maxHealth = 30
