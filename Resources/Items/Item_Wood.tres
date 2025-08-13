@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Item" load_steps=2 format=3 uid="uid://jelpippryfhd"]
+
+[ext_resource type="Script" uid="uid://cthkrx6e4247n" path="res://Scripts/Resources/Item.cs" id="1_6lqdt"]
+
+[resource]
+script = ExtResource("1_6lqdt")
+Name = "Wood"
+Description = "나무다. 파워 나무"
+metadata/_custom_type_script = "uid://bx5mlgt2og2sr"

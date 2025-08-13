@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="CraftingRecipe" load_steps=7 format=3 uid="uid://jgk6rjc38jgi"]
+
+[ext_resource type="Script" uid="uid://7d1xah0yxv5o" path="res://Scripts/Resources/CraftingRecipe.cs" id="1_373sv"]
+[ext_resource type="Resource" uid="uid://jelpippryfhd" path="res://Resources/Items/Item_Wood.tres" id="1_uce2k"]
+[ext_resource type="Script" uid="uid://d145eraoi171b" path="res://Scripts/Resources/Ingredient.cs" id="2_g78l6"]
+[ext_resource type="Resource" uid="uid://deu85lnayk68v" path="res://Resources/Items/Item_WoodenBarricade.tres" id="3_g78l6"]
+
+[sub_resource type="Resource" id="Resource_g78l6"]
+script = ExtResource("2_g78l6")
+Resource = ExtResource("1_uce2k")
+Quantity = 2
+metadata/_custom_type_script = "uid://d145eraoi171b"
+
+[sub_resource type="Resource" id="Resource_x6hp7"]
+script = ExtResource("2_g78l6")
+Resource = ExtResource("3_g78l6")
+Quantity = 1
+metadata/_custom_type_script = "uid://d145eraoi171b"
+
+[resource]
+script = ExtResource("1_373sv")
+Ingredients = Array[Object]([SubResource("Resource_g78l6")])
+Output = SubResource("Resource_x6hp7")
+metadata/_custom_type_script = "uid://7d1xah0yxv5o"

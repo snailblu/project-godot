@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PlaceableItem" load_steps=2 format=3 uid="uid://deu85lnayk68v"]
+
+[ext_resource type="Script" uid="uid://cqx8utpv8583l" path="res://Scripts/Resources/PlaceableItem.cs" id="1_57wed"]
+
+[resource]
+script = ExtResource("1_57wed")
+Name = "WoodenBarricade"
+Description = "우든 바리케이드."

@@ -18,6 +18,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 TimeManager="*res://Scripts/Managers/TimeManager.cs"
+InventoryManager="*res://Scripts/Managers/InventoryManager.cs"
+CraftingManager="*res://Scripts/Managers/CraftingManager.cs"
 
 [display]
 

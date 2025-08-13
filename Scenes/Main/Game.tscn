@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://dv26fnchds2og"]
+[gd_scene load_steps=10 format=4 uid="uid://dv26fnchds2og"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="Script" uid="uid://b2fn1tp27s7i6" path="res://Scenes/Main/LightingController.cs" id="1_dyb2d"]
@@ -8,14 +8,7 @@
 [ext_resource type="TileSet" uid="uid://c7yy01twftbxm" path="res://Textures/World/CliffTileset.tres" id="3_dpnlb"]
 [ext_resource type="Environment" uid="uid://df782jrrfeap3" path="res://Resources/Environments/night_environment.tres" id="3_u2n30"]
 [ext_resource type="PackedScene" uid="uid://bciujj7rehxpm" path="res://Scenes/World/ResourceNode.tscn" id="8_h7g0e"]
-[ext_resource type="Texture2D" uid="uid://cl25yttaxggye" path="res://Textures/UI/HeartUIFull.png" id="9_27pm6"]
-[ext_resource type="Script" uid="uid://bx5mlgt2og2sr" path="res://Scripts/Resources/ResourceData.cs" id="10_u2n30"]
-
-[sub_resource type="Resource" id="Resource_2p31s"]
-script = ExtResource("10_u2n30")
-Icon = ExtResource("9_27pm6")
-AmountPerHit = 1
-metadata/_custom_type_script = "uid://bx5mlgt2og2sr"
+[ext_resource type="Resource" uid="uid://jelpippryfhd" path="res://Resources/Items/Item_Wood.tres" id="9_dyb2d"]
 
 [node name="World" type="Node2D"]
 y_sort_enabled = true
@@ -52,24 +45,24 @@ _nightEnvironment = ExtResource("3_u2n30")
 
 [node name="Bush" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(180, 211)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
 
 [node name="Bush2" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(147, 307)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
 
 [node name="Bush3" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(167, 321)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
 
 [node name="Bush4" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(184, 302)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
 
 [node name="Bush5" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(273, 126)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
 
 [node name="Bush6" parent="." instance=ExtResource("8_h7g0e")]
 position = Vector2(110, 118)
-_resourceData = SubResource("Resource_2p31s")
+_item = ExtResource("9_dyb2d")
