@@ -7,7 +7,7 @@ public class HealthComponent
     public HealthComponent(int initialHealth)
     {
         MaxHealth = initialHealth;
-        CurrentHealth = MaxHealth;
+        CurrentHealth = initialHealth;
     }
 
     public void TakeDamage(int amount)
