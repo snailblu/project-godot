@@ -16,6 +16,7 @@ namespace projectgodot.Components
         private Dictionary<PlayerState, IPlayerState> _states;
         private IPlayerState _currentState;
         private PlayerState _currentStateName;
+        private StateTransitionPriority _priorityManager;
         
         // Player 참조 (상태들이 플레이어 정보에 접근하기 위해)
         public Player Player { get; private set; }
@@ -38,6 +39,9 @@ namespace projectgodot.Components
                 return;
             }
             
+            // 우선순위 관리자 초기화
+            _priorityManager = new StateTransitionPriority(Player);
+            
             // 모든 상태 초기화
             InitializeStates();
             
@@ -53,7 +57,6 @@ namespace projectgodot.Components
                 { PlayerState.Moving, new MovingState(this) },
                 { PlayerState.Shooting, new ShootingState(this) },
                 { PlayerState.TakingDamage, new TakingDamageState(this) },
-                { PlayerState.Starving, new StarvingState(this) },
                 { PlayerState.Dead, new DeadState(this) }
             };
         }
@@ -114,36 +117,21 @@ namespace projectgodot.Components
         /// </summary>
         private void CheckAutoStateTransitions()
         {
-            if (Player == null) return;
+            if (Player == null || _priorityManager == null) return;
             
-            // 최고 우선순위: Dead
-            if (Player.Health.IsDead && _currentStateName != PlayerState.Dead)
+            // 우선순위 관리자를 통한 자동 전환 체크
+            var autoTransition = _priorityManager.GetAutoTransition(_currentStateName, HasMovementInput);
+            if (autoTransition != null)
             {
-                RequestStateTransition(PlayerState.Dead, "Player health reached zero");
+                RequestStateTransition(autoTransition.TargetState, autoTransition.Reason);
                 return;
             }
             
-            // Dead 상태면 더 이상 체크하지 않음
-            if (_currentStateName == PlayerState.Dead) return;
-            
-            // 높은 우선순위: Starving (단, TakingDamage가 아닐 때)
-            if (Player.HungerComponent.IsStarving && 
-                _currentStateName != PlayerState.Starving &&
-                _currentStateName != PlayerState.TakingDamage)
+            // 현재 상태의 자체 전환 조건 체크
+            var stateTransition = _currentState?.CheckTransitionConditions(HasMovementInput);
+            if (stateTransition != null)
             {
-                RequestStateTransition(PlayerState.Starving, "Player is starving");
-                return;
-            }
-            
-            
-            // Moving/Idle 상태 간 전환 (낮은 우선순위)
-            if (_currentStateName == PlayerState.Idle && HasMovementInput)
-            {
-                RequestStateTransition(PlayerState.Moving, "Movement input detected");
-            }
-            else if (_currentStateName == PlayerState.Moving && !HasMovementInput)
-            {
-                RequestStateTransition(PlayerState.Idle, "No movement input");
+                RequestStateTransition(stateTransition.TargetState, stateTransition.Reason);
             }
         }
         
@@ -185,23 +173,7 @@ namespace projectgodot.Components
         /// </summary>
         public bool CanPerformAction(string action)
         {
-            switch (action.ToLower())
-            {
-                case "move":
-                    return _currentStateName != PlayerState.Dead && 
-                           _currentStateName != PlayerState.TakingDamage;
-                           
-                           
-                case "shoot":
-                    return _currentStateName != PlayerState.Dead && 
-                           _currentStateName != PlayerState.TakingDamage;
-                           
-                case "takedamage":
-                    return _currentStateName != PlayerState.Dead;
-                    
-                default:
-                    return false;
-            }
+            return _currentState?.CanPerformAction(action) ?? false;
         }
     }
 }

@@ -1,5 +1,3 @@
-using projectgodot.Components;
-
 namespace projectgodot.Scripts.Interfaces
 {
     /// <summary>
@@ -9,9 +7,9 @@ namespace projectgodot.Scripts.Interfaces
     {
         /// <summary>
         /// 컴포넌트 초기화 메서드
-        /// PlayerContext를 통해 필요한 의존성에 접근할 수 있음
+        /// Player 인스턴스를 통해 필요한 의존성에 접근할 수 있음
         /// </summary>
-        /// <param name="context">Player와 관련된 컨텍스트 정보</param>
-        void Initialize(PlayerContext context);
+        /// <param name="player">Player 인스턴스</param>
+        void Initialize(Player player);
     }
 }

@@ -17,8 +17,7 @@ namespace projectgodot.Tests
             Assert.That((int)PlayerState.Moving, Is.EqualTo(1));
             Assert.That((int)PlayerState.Shooting, Is.EqualTo(2));
             Assert.That((int)PlayerState.TakingDamage, Is.EqualTo(3));
-            Assert.That((int)PlayerState.Starving, Is.EqualTo(4));
-            Assert.That((int)PlayerState.Dead, Is.EqualTo(5));
+            Assert.That((int)PlayerState.Dead, Is.EqualTo(4));
         }
 
         [Test]

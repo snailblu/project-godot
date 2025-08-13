@@ -27,5 +27,17 @@ namespace projectgodot.Components.PlayerStates
             // 모든 상태에서 Dead로 전환 가능
             return true;
         }
+
+        public override bool CanPerformAction(string action)
+        {
+            // Dead 상태에서는 모든 액션 불가능
+            return false;
+        }
+
+        public override StateTransitionRequest CheckTransitionConditions(bool hasMovementInput)
+        {
+            // Dead 상태에서는 다른 상태로 전환 불가
+            return null;
+        }
     }
 }

@@ -13,7 +13,6 @@ namespace projectgodot
         private IMovement _playerMovement;
         private IWeapon _weapon;
         private IHealth _health;
-        private IHunger _hungerComponent;
         private IPlayerInput _inputHandler;
         private IPlayerAnimation _animationController;
         private IStateMachine _stateMachine;
@@ -22,24 +21,19 @@ namespace projectgodot
         [Export] public NodePath MovementComponentPath;
         [Export] public NodePath WeaponComponentPath;
         [Export] public NodePath HealthComponentPath;
-        [Export] public NodePath HungerComponentPath;
         [Export] public NodePath InputHandlerPath;
         [Export] public NodePath AnimationControllerPath;
         [Export] public NodePath StateMachinePath;
         
         // 기타 컴포넌트들 (아직 인터페이스화되지 않은 것들)
-        private PlayerData _playerData;
         private ISceneFactory _sceneFactory;
         private CameraShakeComponent _cameraShake;
         private PlayerCollisionHandler _collisionHandler;
         private PlayerEventBridge _eventBridge;
         
-        // 컴포넌트들에게 제공할 컨텍스트
-        private PlayerContext _context;
         
         // 호환성을 위한 프로퍼티들
         public IHealth Health => _health;
-        public IHunger HungerComponent => _hungerComponent;
 
         private AnimationTree _animationTree;
 
@@ -73,14 +67,11 @@ namespace projectgodot
 
         private void InitializeComponents()
         {
-            // PlayerData는 아직 인터페이스화되지 않음
-            _playerData = new PlayerData();
             
             // 인터페이스 기반 컴포넌트들을 NodePath로 주입 (ResolveOrFallback 헬퍼 사용)
             _playerMovement = ResolveOrFallback(MovementComponentPath, () => new PlayerMovement());
             _weapon = ResolveOrFallback(WeaponComponentPath, () => new WeaponComponent(cooldown: 0.25f));
             _health = ResolveOrFallback(HealthComponentPath, () => new HealthComponent(100));
-            _hungerComponent = ResolveOrFallback(HungerComponentPath, () => new HungerComponent(GameConstants.Hunger.DEFAULT_MAX_HUNGER));
             
             // UI 및 효과 컴포넌트들 (아직 인터페이스화되지 않음)
             if (InputHandlerPath != null && !InputHandlerPath.IsEmpty)
@@ -119,9 +110,6 @@ namespace projectgodot
                 GodotLogger.SafePrint("SceneFactory를 찾을 수 없습니다.");
             }
             
-            // PlayerContext 생성
-            _context = new PlayerContext(this, _sceneFactory);
-            
             // IGameComponent를 구현한 컴포넌트들 초기화
             InitializeGameComponents();
         }
@@ -133,22 +121,20 @@ namespace projectgodot
         {
             // 각 컴포넌트가 IGameComponent를 구현하는 경우 초기화
             if (_playerMovement is IGameComponent movementComponent)
-                movementComponent.Initialize(_context);
+                movementComponent.Initialize(this);
                 
             if (_weapon is IGameComponent weaponComponent)
-                weaponComponent.Initialize(_context);
+                weaponComponent.Initialize(this);
                 
             if (_health is IGameComponent healthComponent)
-                healthComponent.Initialize(_context);
+                healthComponent.Initialize(this);
                 
-            if (_hungerComponent is IGameComponent hungerComponent)
-                hungerComponent.Initialize(_context);
                 
             if (_inputHandler is IGameComponent inputComponent)
-                inputComponent.Initialize(_context);
+                inputComponent.Initialize(this);
                 
             if (_animationController is IGameComponent animationComponent)
-                animationComponent.Initialize(_context);
+                animationComponent.Initialize(this);
         }
 
         private void InitializeStateMachine()
@@ -196,14 +182,10 @@ namespace projectgodot
             _weapon.OnShoot += SpawnProjectile;
             Health.Died += OnDeath;
             Health.HealthChanged += OnHealthChanged;
-            _hungerComponent.HungerChanged += OnHungerChanged;
-            _hungerComponent.StarvationStarted += OnStarvationStarted;
             
             // 입력 이벤트 연결
             _inputHandler.MovementRequested += OnMovementRequested;
             _inputHandler.ShootRequested += OnShootRequested;
-            _inputHandler.TestDamageRequested += OnTestDamageRequested;
-            _inputHandler.EatFoodRequested += OnEatFoodRequested;
             _collisionHandler.DamageReceived += OnDamageReceived;
 
             // 전역 이벤트 연결
@@ -231,7 +213,7 @@ namespace projectgodot
                     // 일반 이동
                     calculatedVelocity = _playerMovement.CalculateVelocity(
                         _currentMovementDirection, 
-                        _playerData.MovementSpeed, 
+                        GameConstants.Player.DEFAULT_MOVEMENT_SPEED, 
                         (float)delta
                     );
                 }
@@ -252,11 +234,6 @@ namespace projectgodot
             // 무기 쿨다운 업데이트
             _weapon.Process((float)delta);
             
-            // 허기 시스템 업데이트 (StateMachine과 무관한 백그라운드 프로세스)
-            UpdateHungerSystem((float)delta);
-            
-            // 음식 섭취 입력 처리
-            _inputHandler.HandleEatFoodInput();
         }
 
         // 입력 이벤트 핸들러들
@@ -273,16 +250,6 @@ namespace projectgodot
             {
                 _weapon.Shoot();
             }
-        }
-
-        private void OnTestDamageRequested()
-        {
-            ProcessDamage(10, "Player took 10 damage!");
-        }
-
-        private void OnEatFoodRequested()
-        {
-            EatFood();
         }
 
         private void OnDamageReceived(int damage)
@@ -341,56 +308,6 @@ namespace projectgodot
             _eventBridge.NotifyPlayerHealthChanged(currentHealth, Health.MaxHealth);
         }
 
-        // 허기 시스템 관련 메서드들
-        private void UpdateHungerSystem(float deltaTime)
-        {
-            // 허기 수치 감소는 항상 처리
-            _hungerComponent.ProcessHunger(deltaTime, GameConstants.Hunger.HUNGER_DECREASE_RATE);
-            
-            // StateMachine이 Starving 상태일 때만 굶주림 데미지 적용
-            // (HungerComponent가 자체적으로 Health에 데미지를 전달)
-            if (_stateMachine?.IsInState(PlayerState.Starving) == true)
-            {
-                _hungerComponent.ProcessStarvation(deltaTime);
-            }
-            else
-            {
-                // 굶주림 상태가 아닐 때 누적 데미지 초기화
-                _hungerComponent.ProcessStarvation(0f);
-            }
-        }
-
-        private void OnHungerChanged(int currentHunger)
-        {
-            // Events 버스를 통해 UI에 허기 변경 알림
-            var events = EventsHelper.GetEventsNode(this);
-            events?.EmitSignal(Events.SignalName.HungerChanged, currentHunger, _hungerComponent.MaxHunger);
-        }
-
-        private void OnStarvationStarted()
-        {
-            // Events 버스를 통해 굶주림 시작 알림
-            var events = EventsHelper.GetEventsNode(this);
-            events?.EmitSignal(Events.SignalName.StarvationStarted);
-            
-            GodotLogger.SafePrint("Player is starving! Health will decrease over time.");
-        }
-
-        public void EatFood(int foodValue = -1)
-        {
-            if (foodValue == -1)
-            {
-                foodValue = GameConstants.Hunger.FOOD_RESTORE_AMOUNT;
-            }
-            
-            _hungerComponent.Eat(foodValue);
-            
-            // Events 버스를 통해 음식 섭취 알림
-            var events = EventsHelper.GetEventsNode(this);
-            events?.EmitSignal(Events.SignalName.FoodConsumed);
-            
-            GodotLogger.SafePrint($"Player consumed food! Hunger restored by {foodValue}");
-        }
 
         public override void _ExitTree()
         {
@@ -404,18 +321,11 @@ namespace projectgodot
                 _health.HealthChanged -= OnHealthChanged;
             }
             
-            if (_hungerComponent != null)
-            {
-                _hungerComponent.HungerChanged -= OnHungerChanged;
-                _hungerComponent.StarvationStarted -= OnStarvationStarted;
-            }
             
             if (_inputHandler != null)
             {
                 _inputHandler.MovementRequested -= OnMovementRequested;
                 _inputHandler.ShootRequested -= OnShootRequested;
-                _inputHandler.TestDamageRequested -= OnTestDamageRequested;
-                _inputHandler.EatFoodRequested -= OnEatFoodRequested;
             }
             
             if (_collisionHandler != null)

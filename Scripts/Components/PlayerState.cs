@@ -2,7 +2,7 @@ namespace projectgodot.Components
 {
     /// <summary>
     /// 플레이어의 가능한 모든 상태를 정의
-    /// 상태 우선순위: Dead > TakingDamage > Shooting > Starving > Moving > Idle
+    /// 상태 우선순위: Dead > TakingDamage > Shooting > Moving > Idle
     /// </summary>
     public enum PlayerState
     {
@@ -18,11 +18,8 @@ namespace projectgodot.Components
         /// <summary>데미지를 받는 중인 상태</summary>
         TakingDamage = 3,
         
-        /// <summary>굶주림 상태 (체력이 계속 감소)</summary>
-        Starving = 4,
-        
         /// <summary>사망 상태</summary>
-        Dead = 5
+        Dead = 4
     }
 
     /// <summary>

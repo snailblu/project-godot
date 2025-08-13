@@ -16,7 +16,6 @@ namespace projectgodot
         public event Action Died;
         public event Action<int> HealthChanged;
         
-        private IHunger _hungerComponent;
 
         public HealthComponent(int maxHealth)
         {
@@ -24,19 +23,9 @@ namespace projectgodot
             CurrentHealth = maxHealth;
         }
 
-        public void Initialize(PlayerContext context)
+        public void Initialize(Player player)
         {
-            _hungerComponent = context.Player.HungerComponent;
-            if (_hungerComponent != null)
-            {
-                _hungerComponent.StarvationDamageApplied += OnStarvationDamageReceived;
-            }
-        }
-        
-        private void OnStarvationDamageReceived(int damage)
-        {
-            TakeDamage(damage);
-            GodotLogger.SafePrint($"Health received starvation damage: {damage}");
+            // 허기 시스템 제거로 더 이상 초기화할 것이 없음
         }
 
         public void TakeDamage(int amount)

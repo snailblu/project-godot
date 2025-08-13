@@ -202,5 +202,8 @@ Logic 클래스가 Godot 데이터에 접근해야 할 경우:
 - GodotLogger는 projectgodot.Utils 네임스페이스에 있다.
 
 ## Task Master AI Instructions
+
 **Import Task Master's development workflow commands and guidelines, treat as if import is in the main CLAUDE.md file.**
 @./.taskmaster/CLAUDE.md
+
+- 가능하면 event 대신 godot의 시그널을 사용한다.

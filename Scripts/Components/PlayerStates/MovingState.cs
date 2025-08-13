@@ -22,5 +22,28 @@ namespace projectgodot.Components.PlayerStates
             return fromState != PlayerState.Dead && 
                    fromState != PlayerState.TakingDamage;
         }
+
+        public override bool CanPerformAction(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "move":
+                case "shoot":
+                case "takedamage":
+                    return true; // Moving 상태에서는 모든 액션 가능
+                default:
+                    return false;
+            }
+        }
+
+        public override StateTransitionRequest CheckTransitionConditions(bool hasMovementInput)
+        {
+            // Moving에서 Idle로 전환
+            if (!hasMovementInput)
+            {
+                return new StateTransitionRequest(PlayerState.Idle, "No movement input");
+            }
+            return null;
+        }
     }
 }

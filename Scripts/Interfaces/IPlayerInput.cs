@@ -15,12 +15,7 @@ namespace projectgodot.Scripts.Interfaces
         /// </summary>
         /// <param name="stateMachine">플레이어 상태 머신</param>
         void Initialize(PlayerStateMachine stateMachine);
-        
-        /// <summary>
-        /// 음식 섭취 입력 처리
-        /// </summary>
-        void HandleEatFoodInput();
-        
+                
         /// <summary>
         /// 이동 요청 이벤트
         /// </summary>
@@ -32,14 +27,5 @@ namespace projectgodot.Scripts.Interfaces
         /// </summary>
         event Action ShootRequested;
         
-        /// <summary>
-        /// 테스트 데미지 요청 이벤트
-        /// </summary>
-        event Action TestDamageRequested;
-        
-        /// <summary>
-        /// 음식 섭취 요청 이벤트
-        /// </summary>
-        event Action EatFoodRequested;
     }
 }

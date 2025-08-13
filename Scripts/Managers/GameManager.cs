@@ -69,13 +69,13 @@ namespace projectgodot
             // 화면 플래시 효과 노드 추가
             var screenFlash = new ScreenFlashEffect();
             AddChild(screenFlash);
-            
+        
             // 게임 시작 후 3초 뒤에 첫 웨이브 시작
-            var timer = GetTree().CreateTimer(3.0f);
-            timer.Timeout += () => {
-                GodotLogger.SafePrint("첫 번째 웨이브를 시작합니다!");
-                StartNextWave();
-            };
+            // var timer = GetTree().CreateTimer(3.0f);
+            // timer.Timeout += () => {
+                // GodotLogger.SafePrint("첫 번째 웨이브를 시작합니다!");
+                // StartNextWave();
+            // };
         }
 
         private void StartNextWave()

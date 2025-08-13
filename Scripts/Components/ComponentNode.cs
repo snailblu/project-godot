@@ -15,25 +15,25 @@ namespace projectgodot.Components
         protected bool IsInitialized { get; private set; }
         
         /// <summary>
-        /// PlayerContext에 대한 참조
+        /// Player에 대한 참조
         /// </summary>
-        protected PlayerContext Context { get; private set; }
+        protected Player Player { get; private set; }
         
         /// <summary>
         /// 컴포넌트 초기화 메서드
         /// 하위 클래스에서 오버라이드하여 구체적인 초기화 로직을 구현
         /// </summary>
-        /// <param name="context">Player와 관련된 컨텍스트 정보</param>
-        public virtual void Initialize(PlayerContext context)
+        /// <param name="player">Player 인스턴스</param>
+        public virtual void Initialize(Player player)
         {
-            Context = context ?? throw new System.ArgumentNullException(nameof(context));
+            Player = player ?? throw new System.ArgumentNullException(nameof(player));
             IsInitialized = true;
             OnInitialize();
         }
         
         /// <summary>
         /// 하위 클래스에서 구현할 초기화 로직
-        /// Context가 설정된 후에 호출됨
+        /// Player가 설정된 후에 호출됨
         /// </summary>
         protected virtual void OnInitialize() { }
         

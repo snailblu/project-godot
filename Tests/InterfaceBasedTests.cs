@@ -103,46 +103,6 @@ namespace projectgodot.Tests
             Assert.That(velocity.Y, Is.EqualTo(direction.Y * speed * delta));
         }
         
-        [Test]
-        public void HungerComponent_ImplementsIHunger()
-        {
-            // Arrange & Act
-            var hunger = new HungerComponent(100);
-            
-            // Assert
-            Assert.That(hunger, Is.InstanceOf<IHunger>());
-            Assert.That(hunger.MaxHunger, Is.EqualTo(100));
-            Assert.That(hunger.CurrentHunger, Is.EqualTo(100));
-            Assert.That(hunger.IsStarving, Is.False);
-        }
-        
-        [Test]
-        public void IHunger_CanBeUsedPolymorphically()
-        {
-            // Arrange
-            IHunger hunger = new HungerComponent(50);
-            bool hungerChangedEventFired = false;
-            bool starvationStartedEventFired = false;
-            
-            hunger.HungerChanged += (newHunger) => hungerChangedEventFired = true;
-            hunger.StarvationStarted += () => starvationStartedEventFired = true;
-            
-            // Act
-            hunger.DecreaseHunger(30);
-            
-            // Assert
-            Assert.That(hunger.CurrentHunger, Is.EqualTo(20));
-            Assert.That(hungerChangedEventFired, Is.True);
-            Assert.That(hunger.IsStarving, Is.False);
-            Assert.That(starvationStartedEventFired, Is.False);
-            
-            // Act - Cause starvation
-            hunger.DecreaseHunger(20);
-            
-            // Assert
-            Assert.That(hunger.CurrentHunger, Is.EqualTo(0));
-            Assert.That(hunger.IsStarving, Is.True);
-            Assert.That(starvationStartedEventFired, Is.True);
-        }
+        // 허기 시스템 제거로 HungerComponent 테스트들은 삭제됨
     }
 }

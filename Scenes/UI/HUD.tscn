@@ -60,17 +60,6 @@ offset_right = 112.0
 offset_bottom = 16.0
 grow_vertical = 2
 
-[node name="HungerBar" type="TextureProgressBar" parent="UIContainer"]
-modulate = Color(1, 0.647, 0, 1)
-layout_mode = 0
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 20.0
-offset_top = -80.0
-offset_right = 220.0
-offset_bottom = -60.0
-grow_vertical = 0
-value = 100.0
 
 [node name="ScoreLabel" type="Label" parent="UIContainer"]
 layout_mode = 0
@@ -94,13 +83,3 @@ offset_bottom = 70.0
 grow_horizontal = 0
 text = "Wave: 1"
 
-[node name="HungerLabel" type="Label" parent="UIContainer"]
-layout_mode = 0
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -150.0
-offset_top = 80.0
-offset_right = -20.0
-offset_bottom = 100.0
-grow_horizontal = 0
-text = "Hunger: 100/100"

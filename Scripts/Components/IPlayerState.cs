@@ -30,6 +30,16 @@ namespace projectgodot.Components
         /// <param name="data">전환 데이터</param>
         /// <returns>전환 가능 여부</returns>
         bool CanTransitionFrom(PlayerState fromState, object data = null);
+        
+        /// <summary>현재 상태에서 특정 액션이 가능한지 확인</summary>
+        /// <param name="action">액션 이름 (move, shoot, takedamage 등)</param>
+        /// <returns>액션 가능 여부</returns>
+        bool CanPerformAction(string action);
+        
+        /// <summary>이 상태에서 다른 상태로의 자동 전환 조건을 체크</summary>
+        /// <param name="hasMovementInput">이동 입력 여부</param>
+        /// <returns>전환 요청, 없으면 null</returns>
+        StateTransitionRequest CheckTransitionConditions(bool hasMovementInput);
     }
 
     /// <summary>
@@ -62,6 +72,18 @@ namespace projectgodot.Components
         {
             // 기본적으로 Dead 상태가 아니면 전환 가능
             return fromState != PlayerState.Dead;
+        }
+
+        public virtual bool CanPerformAction(string action)
+        {
+            // 기본적으로 Dead 상태가 아니면 대부분의 액션 가능
+            return StateName != PlayerState.Dead;
+        }
+
+        public virtual StateTransitionRequest CheckTransitionConditions(bool hasMovementInput)
+        {
+            // 기본적으로 자동 전환 없음 (각 상태에서 오버라이드)
+            return null;
         }
     }
 }

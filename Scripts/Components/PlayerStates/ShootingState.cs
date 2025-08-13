@@ -38,5 +38,27 @@ namespace projectgodot.Components.PlayerStates
             return fromState != PlayerState.Dead && 
                    fromState != PlayerState.TakingDamage;
         }
+
+        public override bool CanPerformAction(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "move":
+                    return true; // 발사하면서도 이동 가능
+                case "shoot":
+                    return false; // 이미 발사 중이므로 추가 발사 불가
+                case "takedamage":
+                    return true; // 발사 중에도 데미지 받을 수 있음
+                default:
+                    return false;
+            }
+        }
+
+        public override StateTransitionRequest CheckTransitionConditions(bool hasMovementInput)
+        {
+            // Shooting 상태는 자체적으로 타이머로 종료됨
+            // OnUpdate에서 처리하므로 여기서는 null 반환
+            return null;
+        }
     }
 }

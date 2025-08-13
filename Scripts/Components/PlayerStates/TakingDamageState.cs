@@ -46,5 +46,26 @@ namespace projectgodot.Components.PlayerStates
             // Dead를 제외하고는 모든 상태에서 데미지 상태로 전환 가능
             return fromState != PlayerState.Dead;
         }
+
+        public override bool CanPerformAction(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "move":
+                case "shoot":
+                    return false; // 데미지 받는 중에는 이동이나 발사 불가
+                case "takedamage":
+                    return true; // 추가 데미지는 받을 수 있음
+                default:
+                    return false;
+            }
+        }
+
+        public override StateTransitionRequest CheckTransitionConditions(bool hasMovementInput)
+        {
+            // TakingDamage 상태는 자체적으로 타이머로 종료됨
+            // OnUpdate에서 처리하므로 여기서는 null 반환
+            return null;
+        }
     }
 }
