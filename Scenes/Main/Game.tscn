@@ -1,15 +1,9 @@
-[gd_scene load_steps=13 format=4 uid="uid://dv26fnchds2og"]
+[gd_scene load_steps=7 format=4 uid="uid://dv26fnchds2og"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="Texture2D" uid="uid://pdui5kt08q7v" path="res://Textures/World/GrassBackground.png" id="1_h7g0e"]
 [ext_resource type="TileSet" uid="uid://byu08iba6c1ak" path="res://Textures/World/DirtTileset.tres" id="2_2p31s"]
-[ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Scenes/Zombies/Zombie.tscn" id="2_zombie"]
 [ext_resource type="TileSet" uid="uid://c7yy01twftbxm" path="res://Textures/World/CliffTileset.tres" id="3_dpnlb"]
-[ext_resource type="Script" uid="uid://di8302x8a4pv8" path="res://Scripts/Managers/GameManager.cs" id="3_gamemanager"]
-[ext_resource type="PackedScene" uid="uid://bxiciup2bitpk" path="res://Scenes/Zombies/RunnerZombie.tscn" id="3_lgr22"]
-[ext_resource type="Script" uid="uid://bamgv7tdye4wx" path="res://Scripts/Systems/SceneFactory.cs" id="4_scenefactory"]
-[ext_resource type="PackedScene" uid="uid://dkg2fw5wfvcji" path="res://Scenes/Zombies/TankZombie.tscn" id="4_trn2v"]
-[ext_resource type="PackedScene" uid="uid://cr846fm1ixgpc" path="res://Scenes/UI/HUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" uid="uid://db5eshtc3blm" path="res://Scenes/World/bush.tscn" id="9_dyb2d"]
 [ext_resource type="PackedScene" uid="uid://b2rhurdmclxa8" path="res://Scenes/World/tree.tscn" id="10_27pm6"]
 
@@ -39,33 +33,6 @@ y_sort_origin = 16
 
 [node name="Player" parent="." instance=ExtResource("1_3ymgr")]
 position = Vector2(160, 90)
-
-[node name="HUD" parent="." instance=ExtResource("5_hud")]
-visible = false
-
-[node name="GameManager" type="Node" parent="." node_paths=PackedStringArray("_spawnLocationsContainer")]
-script = ExtResource("3_gamemanager")
-_zombieScene = ExtResource("2_zombie")
-_runnerZombieScene = ExtResource("3_lgr22")
-_tankZombieScene = ExtResource("4_trn2v")
-_spawnLocationsContainer = NodePath("SpawnLocations")
-
-[node name="SceneFactory" type="Node" parent="GameManager"]
-script = ExtResource("4_scenefactory")
-
-[node name="SpawnLocations" type="Node" parent="GameManager"]
-
-[node name="SpawnPoint1" type="Marker2D" parent="GameManager/SpawnLocations"]
-position = Vector2(63, 34)
-
-[node name="SpawnPoint2" type="Marker2D" parent="GameManager/SpawnLocations"]
-position = Vector2(595, 12)
-
-[node name="SpawnPoint3" type="Marker2D" parent="GameManager/SpawnLocations"]
-position = Vector2(98, 367)
-
-[node name="SpawnPoint4" type="Marker2D" parent="GameManager/SpawnLocations"]
-position = Vector2(580, 354)
 
 [node name="Bush" parent="." instance=ExtResource("9_dyb2d")]
 position = Vector2(128, 140)

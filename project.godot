@@ -15,13 +15,6 @@ run/main_scene="uid://dv26fnchds2og"
 config/features=PackedStringArray("4.4", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
-[autoload]
-
-Events="*res://Scripts/Systems/Events.cs"
-SoundManager="*res://Scripts/Managers/SoundManager.cs"
-GameData="*res://Scripts/Systems/GameData.cs"
-SceneManager="*res://Scripts/Managers/SceneManager.cs"
-
 [display]
 
 window/size/viewport_width=320
