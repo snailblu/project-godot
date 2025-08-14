@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dltp0ukxpvddf" path="res://Scenes/World/ResourceNode.cs" id="1_gu8q0"]
 [ext_resource type="Script" uid="uid://bf45l65rxxdig" path="res://Scripts/Components/HealthComponent.cs" id="1_l6iww"]
-[ext_resource type="Texture2D" uid="uid://ddkhqsa1ngx3r" path="res://Textures/World/Bush.png" id="2_wfabt"]
+[ext_resource type="Texture2D" uid="uid://b7pkuleie5ts0" path="res://Textures/World/Tree.png" id="2_wfabt"]
 [ext_resource type="Texture2D" uid="uid://b8lx6d7sel3yp" path="res://Textures/Shadows/LargeShadow.png" id="3_wfabt"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2vit7"]

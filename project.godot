@@ -39,6 +39,10 @@ project/assembly_name="project godot"
 
 enabled=PackedStringArray()
 
+[global_group]
+
+Player=""
+
 [importer_defaults]
 
 texture={

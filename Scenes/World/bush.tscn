@@ -6,7 +6,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_560ft"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_560ft"]
-size = Vector2(32, 24)
+size = Vector2(16, 16)
 
 [node name="Bush" type="StaticBody2D"]
 collision_layer = 4
@@ -28,5 +28,5 @@ texture = ExtResource("2_560ft")
 [node name="PlacementValidator" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="PlacementValidator"]
-position = Vector2(0, -12)
+position = Vector2(0, -8)
 shape = SubResource("RectangleShape2D_560ft")

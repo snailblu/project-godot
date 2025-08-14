@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://dv26fnchds2og"]
+[gd_scene load_steps=12 format=4 uid="uid://dv26fnchds2og"]
 
 [ext_resource type="PackedScene" uid="uid://hlg1a20kb0h0" path="res://Scenes/Player/Player.tscn" id="1_3ymgr"]
 [ext_resource type="Script" uid="uid://b2fn1tp27s7i6" path="res://Scenes/Main/LightingController.cs" id="1_dyb2d"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://bciujj7rehxpm" path="res://Scenes/World/ResourceNode.tscn" id="8_h7g0e"]
 [ext_resource type="Resource" uid="uid://jelpippryfhd" path="res://Resources/Items/Item_Wood.tres" id="9_dyb2d"]
 [ext_resource type="PackedScene" uid="uid://cnmxmojkrndp4" path="res://Scenes/UI/InventoryUI.tscn" id="10_27pm6"]
+[ext_resource type="PackedScene" uid="uid://cfi5cb4tbwjvm" path="res://Scenes/Zombies/Zombie.tscn" id="10_u2n30"]
 
 [node name="Game" type="Node2D"]
 
@@ -44,6 +45,9 @@ y_sort_origin = 16
 
 [node name="WorldObjects" type="Node2D" parent="."]
 y_sort_enabled = true
+
+[node name="Zombie" parent="WorldObjects" instance=ExtResource("10_u2n30")]
+position = Vector2(338, 95)
 
 [node name="Player" parent="WorldObjects" instance=ExtResource("1_3ymgr")]
 position = Vector2(160, 90)

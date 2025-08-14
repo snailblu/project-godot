@@ -361,7 +361,7 @@ node_connections = [&"output", 0, &"StateMachine"]
 [sub_resource type="CircleShape2D" id="CircleShape2D_h54ih"]
 radius = 22.0227
 
-[node name="Player" type="CharacterBody2D"]
+[node name="Player" type="CharacterBody2D" groups=["Player"]]
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_h54ih")
