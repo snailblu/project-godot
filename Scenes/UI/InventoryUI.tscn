@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnmxmojkrndp4"]
+
+[ext_resource type="Script" uid="uid://nfjcndokeian" path="res://Scenes/UI/InventoryUI.cs" id="1_03hdg"]
+[ext_resource type="PackedScene" uid="uid://d367yocjcruwe" path="res://Scenes/UI/InventorySlot.tscn" id="2_jgtma"]
+
+[node name="InventoryUI" type="PanelContainer"]
+offset_right = 32.0
+offset_bottom = 48.0
+script = ExtResource("1_03hdg")
+_inventorySlotScene = ExtResource("2_jgtma")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+vertical_scroll_mode = 0
+
+[node name="SlotGrid" type="GridContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2

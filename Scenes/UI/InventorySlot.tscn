@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://d367yocjcruwe"]
+
+[ext_resource type="Script" uid="uid://0m0h4x8aoevj" path="res://Scenes/UI/InventorySlot.cs" id="1_owa7q"]
+[ext_resource type="Texture2D" uid="uid://ddkhqsa1ngx3r" path="res://Textures/World/Bush.png" id="2_dqrds"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_owa7q"]
+font_size = 10
+
+[node name="InventorySlot" type="PanelContainer"]
+offset_right = 32.0
+offset_bottom = 50.0
+focus_mode = 1
+script = ExtResource("1_owa7q")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_dqrds")
+
+[node name="QuantityLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "X1"
+label_settings = SubResource("LabelSettings_owa7q")
+horizontal_alignment = 1

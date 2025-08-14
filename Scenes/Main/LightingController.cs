@@ -32,12 +32,10 @@ public partial class LightingController : WorldEnvironment
     private void OnDayStarted()
     {
         this.Environment = _dayEnvironment;
-        GD.Print("조명을 낮으로 변경합니다.");
     }
 
     private void OnNightStarted()
     {
         this.Environment = _nightEnvironment;
-        GD.Print("조명을 밤으로 변경합니다.");
     }
 }
