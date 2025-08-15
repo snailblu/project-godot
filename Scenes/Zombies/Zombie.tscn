@@ -1,10 +1,12 @@
-[gd_scene load_steps=32 format=3 uid="uid://cfi5cb4tbwjvm"]
+[gd_scene load_steps=34 format=3 uid="uid://cfi5cb4tbwjvm"]
 
 [ext_resource type="Script" uid="uid://bfmfotvqwp6aa" path="res://Scenes/Zombies/Zombie.cs" id="1_hpqme"]
 [ext_resource type="Texture2D" uid="uid://2wh4mspcyti8" path="res://Textures/Characters/zombie_spritesheet.png" id="2_plp78"]
 [ext_resource type="Texture2D" uid="uid://c7sstyl0ebv83" path="res://Textures/Shadows/MediumShadow.png" id="3_hpqme"]
 [ext_resource type="Script" uid="uid://bf45l65rxxdig" path="res://Scripts/Components/HealthComponent.cs" id="4_xllip"]
-[ext_resource type="Script" uid="uid://bdysu8fnobpnb" path="res://Scripts/Components/AttackComponent.cs" id="5_hxlwr"]
+[ext_resource type="Script" uid="uid://d0i0vouj6fx5b" path="res://Scripts/Components/ZombieAttackComponent.cs" id="5_flrt1"]
+[ext_resource type="Script" uid="uid://b5ggpawuwmbms" path="res://Scripts/Components/StateMachine.cs" id="6_hxlwr"]
+[ext_resource type="Script" uid="uid://dygdy0q8x6jp8" path="res://Scripts/Components/AnimationController.cs" id="7_flrt1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iaqtk"]
 atlas = ExtResource("2_plp78")
@@ -209,6 +211,20 @@ motion_mode = 1
 script = ExtResource("1_hpqme")
 Speed = 10.0
 
+[node name="StateMachine" type="Node" parent="."]
+script = ExtResource("6_hxlwr")
+
+[node name="AttackComponent" type="Node" parent="."]
+script = ExtResource("5_flrt1")
+AttackRange = 20.0
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("4_xllip")
+_maxHealth = 30
+
+[node name="AnimationController" type="Node" parent="."]
+script = ExtResource("7_flrt1")
+
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -16)
 sprite_frames = SubResource("SpriteFrames_iaqtk")
@@ -222,15 +238,6 @@ shape = SubResource("CapsuleShape2D_ov416")
 [node name="ShadowSprite2D" type="Sprite2D" parent="."]
 show_behind_parent = true
 texture = ExtResource("3_hpqme")
-
-[node name="HealthComponent" type="Node" parent="."]
-script = ExtResource("4_xllip")
-_maxHealth = 30
-
-[node name="AttackComponent" type="Node" parent="."]
-script = ExtResource("5_hxlwr")
-AttackRange = 25.0
-AttackCooldown = 2.0
 
 [node name="DetectionArea" type="Area2D" parent="."]
 

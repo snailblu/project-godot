@@ -1,7 +1,7 @@
 // HealthComponent.cs (Godot Node 래퍼)
 using Godot;
 
-public partial class HealthComponent : Node
+public partial class HealthComponent : Node, IDamageable
 {
     [Signal]
     public delegate void HealthChangedEventHandler(float currentHealth, float maxHealth);

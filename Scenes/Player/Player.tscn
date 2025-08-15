@@ -1,9 +1,14 @@
-[gd_scene load_steps=44 format=3 uid="uid://hlg1a20kb0h0"]
+[gd_scene load_steps=50 format=3 uid="uid://hlg1a20kb0h0"]
 
 [ext_resource type="Script" uid="uid://c5d4w3kly52sx" path="res://Scenes/Player/PlayerController.cs" id="1_h54ih"]
 [ext_resource type="Texture2D" uid="uid://c0qnso8yqex2r" path="res://Textures/Characters/Player.png" id="3_h54ih"]
 [ext_resource type="Texture2D" uid="uid://c7sstyl0ebv83" path="res://Textures/Shadows/MediumShadow.png" id="3_ude3g"]
 [ext_resource type="Script" uid="uid://bf45l65rxxdig" path="res://Scripts/Components/HealthComponent.cs" id="4_ude3g"]
+[ext_resource type="Script" uid="uid://bex61p2tpadqy" path="res://Scripts/Components/PlayerAttackComponent.cs" id="5_4wape"]
+[ext_resource type="Script" uid="uid://dtssilwmn0vep" path="res://Scripts/Components/PlayerAnimationController.cs" id="5_jmcll"]
+[ext_resource type="Script" uid="uid://ba1ojqdhkfbpx" path="res://Scripts/Components/KeyboardInputProvider.cs" id="7_t26db"]
+[ext_resource type="Script" uid="uid://cnlxekllxebuy" path="res://Scripts/Components/MovementComponent.cs" id="8_fk5o5"]
+[ext_resource type="Script" uid="uid://vb8y5at5il8o" path="res://Scripts/Components/InteractionComponent.cs" id="9_825xp"]
 
 [sub_resource type="Animation" id="Animation_ude3g"]
 length = 0.001
@@ -267,6 +272,7 @@ blend_point_2/node = SubResource("AnimationNodeAnimation_i5acl")
 blend_point_2/pos = Vector2(0.9, 0)
 blend_point_3/node = SubResource("AnimationNodeAnimation_epg6k")
 blend_point_3/pos = Vector2(0, -1)
+blend_mode = 1
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h54ih"]
 animation = &"idle_left"
@@ -346,7 +352,7 @@ advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_epg6k"]
 states/AttackState/node = SubResource("AnimationNodeBlendSpace2D_esmjy")
-states/AttackState/position = Vector2(367, 204.5)
+states/AttackState/position = Vector2(365.625, 202.5)
 states/MoveState/node = SubResource("AnimationNodeStateMachine_i5acl")
 states/MoveState/position = Vector2(365, 98.25)
 transitions = ["Start", "MoveState", SubResource("AnimationNodeStateMachineTransition_h54ih"), "MoveState", "AttackState", SubResource("AnimationNodeStateMachineTransition_jmcll"), "AttackState", "MoveState", SubResource("AnimationNodeStateMachineTransition_4wape")]
@@ -358,6 +364,9 @@ nodes/StateMachine/position = Vector2(120, 90)
 nodes/output/position = Vector2(450, 120)
 node_connections = [&"output", 0, &"StateMachine"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ude3g"]
+size = Vector2(23, 33)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_h54ih"]
 radius = 22.0227
 
@@ -365,7 +374,6 @@ radius = 22.0227
 collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_h54ih")
-Speed = 100.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -13)
@@ -382,11 +390,11 @@ libraries = {
 tree_root = SubResource("AnimationNodeBlendTree_0u84n")
 advance_expression_base_node = NodePath("..")
 anim_player = NodePath("../AnimationPlayer")
-parameters/StateMachine/AttackState/blend_position = Vector2(-0.0702426, -0.447099)
+parameters/StateMachine/AttackState/blend_position = Vector2(0.264214, 0.0245231)
 parameters/StateMachine/MoveState/conditions/Idle = false
 parameters/StateMachine/MoveState/conditions/Run = false
 parameters/StateMachine/MoveState/IdleState/blend_position = Vector2(0.00333333, -0.614512)
-parameters/StateMachine/MoveState/RunState/blend_position = Vector2(-0.035, 0.269841)
+parameters/StateMachine/MoveState/RunState/blend_position = Vector2(0.292642, 0.00272477)
 
 [node name="ShadowSprite2D" type="Sprite2D" parent="."]
 show_behind_parent = true
@@ -395,14 +403,6 @@ texture = ExtResource("3_ude3g")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(0, 0, -5, -7, 0, -13, 5, -7)
-
-[node name="InteractionArea" type="Area2D" parent="."]
-position = Vector2(0, -1)
-collision_mask = 4
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionArea"]
-position = Vector2(0, -10)
-shape = SubResource("CircleShape2D_h54ih")
 
 [node name="HealthComponent" type="Node" parent="."]
 script = ExtResource("4_ude3g")
@@ -414,3 +414,42 @@ limit_top = -700
 limit_right = 1000
 limit_bottom = 700
 position_smoothing_enabled = true
+
+[node name="PlayerAttackComponent" type="Node" parent="." node_paths=PackedStringArray("_attackPivot")]
+script = ExtResource("5_4wape")
+AttackCoolDown = 0.3
+_attackPivot = NodePath("../AttackPivot")
+
+[node name="PlayerAnimationController" type="Node" parent="."]
+script = ExtResource("5_jmcll")
+
+[node name="AttackPivot" type="Node2D" parent="."]
+position = Vector2(0, -11)
+
+[node name="AttackArea" type="Area2D" parent="AttackPivot"]
+position = Vector2(0, 12)
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackPivot/AttackArea"]
+position = Vector2(16.5, -8.5)
+shape = SubResource("RectangleShape2D_ude3g")
+
+[node name="KeyboardInputProvider" type="Node" parent="."]
+script = ExtResource("7_t26db")
+
+[node name="MovementComponent" type="Node2D" parent="."]
+script = ExtResource("8_fk5o5")
+Speed = 80.0
+
+[node name="InteractionComponent" type="Node2D" parent="."]
+script = ExtResource("9_825xp")
+
+[node name="InteractionArea" type="Area2D" parent="InteractionComponent"]
+position = Vector2(0, -1)
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractionComponent/InteractionArea"]
+position = Vector2(0, -10)
+shape = SubResource("CircleShape2D_h54ih")

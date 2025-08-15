@@ -1,7 +1,8 @@
 // AttackComponent.cs
+using System;
 using Godot;
 
-public partial class AttackComponent : Node
+public partial class ZombieAttackComponent : Node, IAttack, ITargetedAttack
 {
     [Export]
     public float AttackDamage { get; private set; } = 10.0f;
@@ -15,6 +16,10 @@ public partial class AttackComponent : Node
     [Export]
     public float AttackWindup { get; private set; } = 0.3f;
 
+    // 공격 생명주기 이벤트
+    public event Action AttackStarted;
+    public event Action AttackEnded;
+
     private Timer _cooldownTimer;
     private Timer _windupTimer; // 선딜레이를 위한 타이머를 추가합니다.
     private Node2D _currentTarget; // 현재 공격 중인 목표를 저장할 변수
@@ -25,6 +30,7 @@ public partial class AttackComponent : Node
         _cooldownTimer = new Timer();
         _cooldownTimer.WaitTime = AttackCooldown;
         _cooldownTimer.OneShot = true;
+        _cooldownTimer.Timeout += _OnCooldownTimerTimeout;
         AddChild(_cooldownTimer);
 
         // 선딜레이 타이머 설정
@@ -45,22 +51,17 @@ public partial class AttackComponent : Node
     /// <summary>
     /// 공격을 '시작'하는 함수. 실제 데미지는 타이머 이후에 들어갑니다.
     /// </summary>
-    public void PerformAttack(Node2D target)
+    public void PerformAttack(Node2D target = null)
     {
-        if (!CanAttack())
-        {
+        if (!CanAttack() || target == null)
             return;
-        }
 
-        // 1. 공격을 시작했으므로, 즉시 쿨타임을 돌립니다.
         _cooldownTimer.Start();
-
-        // 2. 현재 목표물을 저장하고, 선딜레이 타이머를 시작합니다.
         _currentTarget = target;
         _windupTimer.Start();
 
-        // TODO: 이 시점에서 부모에게 공격 애니메이션을 재생하라고 알리는 것이 좋습니다.
-        // GetParent<Zombie>().PlayAttackAnimation();
+        // 공격 시작을 알림
+        AttackStarted?.Invoke();
     }
 
     /// <summary>
@@ -69,23 +70,44 @@ public partial class AttackComponent : Node
     private void _OnWindupTimerTimeout()
     {
         // 선딜레이가 끝난 시점에, 저장해두었던 목표물이 여전히 유효한지 확인합니다.
-        if (
-            IsInstanceValid(_currentTarget)
-            && _currentTarget.GetNodeOrNull<HealthComponent>("HealthComponent")
-                is HealthComponent targetHealth
-        )
+        IDamageable targetDamageable = null;
+        
+        if (IsInstanceValid(_currentTarget))
+        {
+            // First try direct interface check
+            if (_currentTarget is IDamageable directDamageable)
+            {
+                targetDamageable = directDamageable;
+            }
+            // If not directly implementing, look for component
+            else
+            {
+                targetDamageable = _currentTarget.GetNodeOrNull<HealthComponent>("HealthComponent") as IDamageable;
+            }
+        }
+
+        if (targetDamageable != null)
         {
             GD.Print(
                 $"{GetParent().Name}이(가) {_currentTarget.Name}을(를) {AttackDamage}의 피해로 공격!"
             );
-            targetHealth.TakeDamage(AttackDamage);
+            targetDamageable.TakeDamage(AttackDamage);
         }
         else
         {
-            GD.Print("공격하는 동안 목표물이 사라졌습니다.");
+            GD.Print("공격하는 동안 목표물이 사라졌거나 데미지를 받을 수 없습니다.");
         }
 
         // 다음 공격을 위해 현재 목표물 정보를 초기화합니다.
         _currentTarget = null;
+    }
+
+    /// <summary>
+    /// 쿨타임 타이머가 끝났을 때 자동으로 호출되는 함수.
+    /// </summary>
+    private void _OnCooldownTimerTimeout()
+    {
+        // 공격이 완전히 끝났음을 알림
+        AttackEnded?.Invoke();
     }
 }
