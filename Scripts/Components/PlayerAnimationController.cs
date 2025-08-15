@@ -40,7 +40,7 @@ public partial class PlayerAnimationController : Node
 
         // BlendSpace 파라미터는 항상 마지막으로 바라본 방향을 사용합니다.
         Vector2 rawDirection = _playerController.LastDirection;
-        Vector2 animationDirection = new Vector2(rawDirection.X, -rawDirection.Y);
+        Vector2 animationDirection = ConvertToAnimationDirection(rawDirection);
 
         _animationTree.Set(
             "parameters/StateMachine/MoveState/IdleState/blend_position",
@@ -56,6 +56,12 @@ public partial class PlayerAnimationController : Node
         );
     }
 
+    private Vector2 ConvertToAnimationDirection(Vector2 gameDirection)
+    {
+        // 게임 좌표계를 애니메이션 방향으로 변환 (Y축 반전)
+        return new Vector2(gameDirection.X, -gameDirection.Y);
+    }
+
     public override void _ExitTree()
     {
         // 이벤트 구독 해제로 메모리 누수 방지
@@ -68,6 +74,6 @@ public partial class PlayerAnimationController : Node
     private void PlayAttackAnimation()
     {
         // 공격 요청을 받으면 StateMachine의 상태를 전환합니다.
-        _stateMachine.Travel("AttackState");
+        _stateMachine.Start("AttackState");
     }
 }

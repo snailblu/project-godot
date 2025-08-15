@@ -5,8 +5,11 @@ public partial class AnimationController : Node
 {
     #region 노드 경로 설정 (Node Path Configuration)
 
-    [Export] public NodePath SpriteNodePath { get; set; } = "../AnimatedSprite2D";
-    [Export] public NodePath StateMachinePath { get; set; } = "../StateMachine";
+    [Export]
+    public NodePath SpriteNodePath { get; set; } = "../AnimatedSprite2D";
+
+    [Export]
+    public NodePath StateMachinePath { get; set; } = "../StateMachine";
 
     #endregion
 

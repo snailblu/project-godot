@@ -15,6 +15,9 @@ public partial class PlayerAttackComponent : Node, IAttack, IDirectionalAttack /
 
     public event Action OnAttackPerformed;
 
+    [Signal]
+    public delegate void AttackFinishedEventHandler();
+
     private Area2D _attackArea; // 실제 공격 판정 영역
     private Timer _cooldownTimer;
     private bool _canAttack = true;
@@ -24,7 +27,9 @@ public partial class PlayerAttackComponent : Node, IAttack, IDirectionalAttack /
     {
         if (_attackPivot == null)
         {
-            GD.PrintErr("PlayerAttackComponent에 AttackPivot이 연결되지 않았습니다! 컴포넌트가 비활성화됩니다.");
+            GD.PrintErr(
+                "PlayerAttackComponent에 AttackPivot이 연결되지 않았습니다! 컴포넌트가 비활성화됩니다."
+            );
             return; // 초기화 실패 시 즉시 종료
         }
 
@@ -32,7 +37,9 @@ public partial class PlayerAttackComponent : Node, IAttack, IDirectionalAttack /
         _attackArea = _attackPivot.GetNodeOrNull<Area2D>("AttackArea");
         if (_attackArea == null)
         {
-            GD.PrintErr("PlayerAttackComponent: AttackPivot에 AttackArea가 없습니다! 컴포넌트가 비활성화됩니다.");
+            GD.PrintErr(
+                "PlayerAttackComponent: AttackPivot에 AttackArea가 없습니다! 컴포넌트가 비활성화됩니다."
+            );
             return;
         }
 
@@ -43,6 +50,7 @@ public partial class PlayerAttackComponent : Node, IAttack, IDirectionalAttack /
         {
             _canAttack = true;
             GD.Print("PlayerAttackComponent: Attack cooldown finished, can attack again");
+            EmitSignal(SignalName.AttackFinished);
         };
 
         // 모든 초기화가 성공한 경우에만 활성화
@@ -89,7 +97,7 @@ public partial class PlayerAttackComponent : Node, IAttack, IDirectionalAttack /
         foreach (var body in overlappingBodies)
         {
             IDamageable damageable;
-            
+
             // First try direct interface check
             if (body is IDamageable directDamageable)
             {
